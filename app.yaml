@@ -1,0 +1,23 @@
+runtime: nodejs22
+instance_class: F1
+
+env_variables:
+  NODE_ENV: "production"
+  GCS_BUCKET_NAME: "liquidax-db-backups"
+  # DATABASE_URL: "postgresql://user:pass@/dbname?host=/cloudsql/project:region:instance"
+  # ALCHEMY_API_KEY: "..."
+
+# Increase scaling for sync script background execution if needed
+automatic_scaling:
+  target_cpu_utilization: 0.65
+  min_instances: 0
+  max_instances: 2
+
+handlers:
+  - url: /api/.*
+    script: auto
+    secure: always
+
+  - url: /.*
+    script: auto
+    secure: always
