@@ -35,7 +35,6 @@ function App() {
   const [rates, setRates] = useState<MarketRate[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [activeTab, setActiveTab] = useState('DeFi Rates');
   const [rateTypeFilter, setRateTypeFilter] = useState<'All' | 'fixed' | 'floating'>('All');
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
 
@@ -48,7 +47,8 @@ function App() {
     'DeFi Rates': 'defi',
     'CeFi Rates': 'cefi',
     'Bitcoin': 'bitcoin',
-    'RWAs': 'rwas'
+    'RWAs': 'rwas',
+    'Protocols': 'protocols'
   };
 
   const slugToTab: Record<string, string> = {
@@ -56,8 +56,14 @@ function App() {
     'cefi': 'CeFi Rates',
     'bitcoin': 'Bitcoin',
     'rwas': 'RWAs',
-    'rwa': 'RWAs'
+    'rwa': 'RWAs',
+    'protocols': 'Protocols'
   };
+
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    const hash = typeof window !== 'undefined' ? window.location.hash.replace('#', '') : '';
+    return slugToTab[hash] || 'DeFi Rates';
+  });
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -222,7 +228,7 @@ function App() {
       </header>
 
       <nav className="tab-nav" style={{ display: 'flex', gap: '1.5rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--glass-border)', padding: '0 0.5rem', flexWrap: 'wrap' }}>
-        {['DeFi Rates', 'CeFi Rates', 'Bitcoin', 'RWAs'].map(t => (
+        {['DeFi Rates', 'CeFi Rates', 'Bitcoin', 'RWAs', 'Protocols'].map(t => (
           <button
             key={t}
             onClick={() => setActiveTab(t)}
@@ -633,6 +639,132 @@ function App() {
           )}
 
         </div>
+      )}
+      {activeTab === 'Protocols' && (
+        <main className="section-content" style={{ animation: 'fadeIn 0.4s ease-out' }}>
+          <div className="discovery-header" style={{ marginBottom: '2rem', textAlign: 'center' }}>
+            <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Protocol Discovery</h2>
+            <p style={{ color: 'var(--text-secondary)' }}>Detailed insights into the engines powering decentralized finance</p>
+          </div>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', 
+            gap: '1.5rem' 
+          }}>
+            {[
+              {
+                name: 'Morpho',
+                website: 'https://morpho.org',
+                uniqueness: 'Layered Efficiency',
+                highlights: 'Extends Aave/Compound with peer-to-peer matching. Offers isolated risk markets via Morpho Blue.',
+                rateType: 'Floating / Adaptive',
+                chains: ['Ethereum', 'Base', 'Arbitrum']
+              },
+              {
+                name: 'Aave V3',
+                website: 'https://aave.com',
+                uniqueness: 'Global Liquidity Hub',
+                highlights: 'Industry standard for lending. Features E-Mode for high-LTV stablecoin loops and Cross-chain Portals.',
+                rateType: 'Floating',
+                chains: ['Ethereum', 'Base', 'Arbitrum', 'Polygon', 'Avalanche', 'Optimism']
+              },
+              {
+                name: 'Maker / Sky',
+                website: 'https://sky.money',
+                uniqueness: 'Stablecoin Engine',
+                highlights: 'The origin of DAI/USDS. Uses Collateralized Debt Positions (CDPs) with fixed stability fees.',
+                rateType: 'Fixed (Governance Set)',
+                chains: ['Ethereum']
+              },
+              {
+                name: 'Liquity V1',
+                website: 'https://liquity.org',
+                uniqueness: 'Zero-Interest Lending',
+                highlights: 'Fully immutable, governance-free, ETH-only. Offers 0% interest loans with a one-time initiation fee.',
+                rateType: 'Fixed (0%)',
+                chains: ['Ethereum']
+              },
+              {
+                name: 'Liquity V2',
+                website: 'https://liquity.org',
+                uniqueness: 'User-Set Rates',
+                highlights: 'Multi-collateral evolution of Liquity. Introducing BOLD and market-driven individual interest rates.',
+                rateType: 'Dynamic / User-Set',
+                chains: ['Ethereum']
+              },
+              {
+                name: 'Moonwell',
+                website: 'https://moonwell.fi',
+                uniqueness: 'Base L3 Native',
+                highlights: 'Leading lending protocol on Base and Moonbeam. High performance and deep integration with Coinbase ecosystem.',
+                rateType: 'Floating',
+                chains: ['Base', 'Moonbeam', 'Moonriver']
+              },
+              {
+                name: 'Kamino',
+                website: 'https://kamino.finance',
+                uniqueness: 'Solana Unified Layer',
+                highlights: 'Combines lending, automated liquidity management, and leverage into a single Solana interface.',
+                rateType: 'Floating',
+                chains: ['Solana']
+              },
+              {
+                name: 'Zentra',
+                website: 'https://zentra.finance',
+                uniqueness: 'Bitcoin ZK-Native',
+                highlights: 'Native money market for Citrea (Bitcoin L2). Enables trust-minimized BTC borrowing and lending.',
+                rateType: 'Floating',
+                chains: ['Citrea']
+              }
+            ].map(p => (
+              <div key={p.name} className="card protocol-card" style={{ 
+                padding: '1.5rem', 
+                border: '1px solid var(--glass-border)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1rem',
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div>
+                    <h3 style={{ fontSize: '1.25rem', marginBottom: '0.25rem' }}>{p.name}</h3>
+                    <a href={p.website} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.8rem', color: 'var(--accent-primary)', textDecoration: 'none' }}>
+                      {p.website.replace('https://', '')} ↗
+                    </a>
+                  </div>
+                  <div className="badge" style={{ background: 'rgba(34, 211, 238, 0.1)', color: 'var(--accent-primary)', fontSize: '0.7rem' }}>
+                    {p.uniqueness}
+                  </div>
+                </div>
+                
+                <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                  {p.highlights}
+                </p>
+
+                <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Rate Type:</span>
+                    <span style={{ fontWeight: 600 }}>{p.rateType}</span>
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                    {p.chains.map(c => (
+                      <span key={c} style={{ 
+                        fontSize: '9px', 
+                        padding: '2px 6px', 
+                        background: 'rgba(255,255,255,0.05)', 
+                        borderRadius: '4px',
+                        border: '1px solid rgba(255,255,255,0.1)'
+                      }}>
+                        {c}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </main>
       )}
     </div>
   );
