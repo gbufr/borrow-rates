@@ -90,6 +90,18 @@ function App() {
   }, [activeTab]);
 
   useEffect(() => {
+    const titles: Record<string, string> = {
+      'DeFi Rates': 'DeFi Borrow Rates & APYs | Aave, Morpho, Maker',
+      'CeFi Rates': 'CeFi Lending Rates | Coinbase, Binance, Nexo',
+      'Bitcoin': 'Bitcoin Borrow Rates | Citrea, Babylon, Lombard',
+      'RWAs': 'RWA Lending Rates | BlackRock BUIDL, Ondo, Superstate',
+      'Protocols': 'DeFi Protocol Discovery | High-Efficiency Engines'
+    };
+    const title = titles[activeTab] || 'Live Borrow Rates';
+    document.title = `${title} | borrow-rates.org`;
+  }, [activeTab]);
+
+  useEffect(() => {
     fetchData();
   }, [protocol, debtToken, chain, collateralAsset]);
 
