@@ -252,8 +252,8 @@ export class AaveScanner implements ProtocolScanner {
             });
             console.log(`[SUCCESS] ${this.getName()} ${symbol}: ${(rate * 100).toFixed(2)}%`);
           }
-          // Aggressive delay to respect Alchemy free tier
-          await new Promise(resolve => setTimeout(resolve, 300));
+          // Strict 1s delay
+          await new Promise(resolve => setTimeout(resolve, 1000));
         } catch (e: any) {
           console.error(`[${this.getName()}] Failed to sync reserve ${symbol}:`, e.message);
           await new Promise(resolve => setTimeout(resolve, 1000)); // Longer wait on error

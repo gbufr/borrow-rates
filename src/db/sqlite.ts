@@ -159,6 +159,15 @@ export class SQLiteAdapter implements ILoanRepository {
     return await this.db.selectFrom('rates').selectAll().execute();
   }
 
+  async getOldestRates(limit: number): Promise<MarketRate[]> {
+    return await this.db
+      .selectFrom('rates')
+      .selectAll()
+      .orderBy('lastUpdateTimestamp', 'asc')
+      .limit(limit)
+      .execute();
+  }
+
   async deleteRatesForProtocol(protocol: string): Promise<void> {
     await this.db.deleteFrom('rates').where('protocol', '=', protocol).execute();
   }

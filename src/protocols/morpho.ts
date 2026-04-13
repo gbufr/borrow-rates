@@ -212,6 +212,8 @@ export class MorphoScanner implements ProtocolScanner {
             debtPath: getAssetPath(debtSymbol),
             rateType: (item.irmAddress === ADAPTIVE_CURVE_IRMS[this.chainId]) ? 'floating' : 'fixed'
           });
+          // Strict 1s delay
+          await new Promise(resolve => setTimeout(resolve, 1000));
         }
       }
     } catch (e) {

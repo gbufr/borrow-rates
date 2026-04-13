@@ -68,6 +68,7 @@ export interface ILoanRepository {
   getAllPrices(): Promise<AssetPrice[]>;
   upsertRate(rate: MarketRate): Promise<void>;
   getAllRates(): Promise<MarketRate[]>;
+  getOldestRates(limit: number): Promise<MarketRate[]>;
   deleteRatesForProtocol(protocol: string): Promise<void>;
   close(): Promise<void>;
 }

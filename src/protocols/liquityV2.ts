@@ -233,6 +233,9 @@ export class LiquityV2Scanner implements ProtocolScanner {
             rateType: 'fixed'
           });
           console.log(`[LIQUITY V2] Synced ${symbol}/BOLD: ${(rate * 100).toFixed(2)}%`);
+          
+          // Strict 1s delay
+          await new Promise(resolve => setTimeout(resolve, 1000));
         }
       }
     } catch (e) {

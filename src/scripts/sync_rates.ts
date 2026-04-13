@@ -120,13 +120,58 @@ async function syncAllRates() {
   let successCount = 0;
   let failCount = 0;
 
+  // --- Phase 1: Priority Pass (Sync Stale Assets) ---
+  console.log('\n--- Phase 1: Priority Pass (Stale Assets) ---');
+  const oldestRates = await db.getOldestRates(20);
+  console.log(`Prioritizing ${oldestRates.length} oldest rates...`);
+
+  for (const rate of oldestRates) {
+    const scanner = scanners.find(s => s.getName() === rate.protocol && ((s as any).chain || 'Ethereum') === rate.chain);
+    if (!scanner) continue;
+
+    try {
+      console.log(`[PRIORITY] ${rate.protocol} (${rate.chain}) ${rate.assetPair}...`);
+      const symbols = rate.assetPair.split('/');
+      const collSymbol = symbols[0];
+      const debtSymbol = symbols[1];
+      
+      const collAddr = getAssetAddress(collSymbol, rate.chain);
+      const debtAddr = getAssetAddress(debtSymbol, rate.chain);
+      
+      if (!collAddr || !debtAddr) continue;
+      
+      // Determine marketId if possible
+      let marketId: string | undefined = undefined;
+      if (rate.protocol.includes('Maker')) {
+         if (collSymbol === 'WETH') marketId = 'ETH-A';
+         else if (collSymbol === 'WBTC') marketId = 'WBTC-A';
+         else if (collSymbol === 'wstETH') marketId = 'WSTETH-A';
+      }
+
+      const newRate = await scanner.getMarketRate(collAddr, debtAddr, marketId);
+      if (newRate !== null) {
+        await db.upsertRate({
+          ...rate,
+          rate: newRate,
+          lastUpdateTimestamp: timestamp
+        });
+        console.log(`[SUCCESS] Refreshed ${rate.protocol} ${rate.assetPair}: ${(newRate * 100).toFixed(2)}%`);
+        successCount++;
+      }
+      // Strict 1s delay as requested
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    } catch (e: any) {
+      console.error(`[FAILED] Priority refresh for ${rate.assetPair}:`, e.message);
+      failCount++;
+    }
+  }
+
+  // --- Phase 2: Regular Sync & Discovery ---
+  console.log('\n--- Phase 2: Regular Sync & Discovery ---');
   for (const scanner of scanners) {
     const protocolName = scanner.getName();
     console.log(`\nChecking protocol: ${protocolName}`);
     
-    // Clear old rates to ensure no stale pairs remain
-    await db.deleteRatesForProtocol(protocolName);
-
     if (scanner.syncAllRates) {
       await scanner.syncAllRates(db);
     }
@@ -244,6 +289,9 @@ async function syncAllRates() {
           });
           console.log(`[SUCCESS] ${protocolName} ${pair.coll.symbol}/${pair.debt.symbol}: ${(rate * 100).toFixed(2)}%`);
           successCount++;
+          
+          // Strict 1s delay
+          await new Promise(resolve => setTimeout(resolve, 1000));
         }
       } catch (e: any) {
         console.error(`[ERROR] ${protocolName} ${pair.coll.symbol}/${pair.debt.symbol}: ${e.message || e}`);
