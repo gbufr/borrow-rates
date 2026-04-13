@@ -25,6 +25,8 @@ const ASSETS = {
   USDS: { symbol: 'USDS', address: getAddress('0xdC035D45d973E3EC169d2276DDab16f1e407384F') },
   BOLD: { symbol: 'BOLD', address: getAddress('0x0000000000000000000000000000000000000000') }, // Placeholder if not live
   LUSD: { symbol: 'LUSD', address: getAddress('0x5f98805A4e8be255a32880FDeC7F6728C6568bA0') },
+  LBTC: { symbol: 'LBTC', address: getAddress('0x8236a87084f851da573c773a908092241612788e') }, // Ethereum Lombard
+  ctBTC: { symbol: 'WcBTC', address: getAddress('0x0000000000000000000000000000000000000000') }, // Placeholder for Citrea
 };
 
 const PAIRS = [
@@ -161,7 +163,8 @@ async function syncAllRates() {
             collateralCategory: getAssetCategory(pair.coll.symbol),
             debtCategory: getAssetCategory(pair.debt.symbol),
             collateralPath: getAssetPath(pair.coll.symbol),
-            debtPath: getAssetPath(pair.debt.symbol)
+            debtPath: getAssetPath(pair.debt.symbol),
+            rateType: protocolName.includes('Liquity V1') ? 'fixed' : 'floating'
           });
           console.log(`[SUCCESS] ${protocolName} ${pair.coll.symbol}/${pair.debt.symbol}: ${(rate * 100).toFixed(2)}%`);
           successCount++;
@@ -171,6 +174,40 @@ async function syncAllRates() {
         failCount++;
       }
     }
+  }
+
+  // --- Manual/Ecosystem Injection for New protocols (Citrea/Zentra) ---
+  console.log('\n--- Syncing Citrea Ecosystem (Zentra Finance) ---');
+  try {
+    const citreaRates = [
+      { coll: 'WcBTC', debt: 'ctUSD', rate: 0.0222, ltv: 0.80, threshold: 0.85, protocol: 'Zentra (Citrea)' },
+      { coll: 'WcBTC', debt: 'WcBTC', rate: 0.0058, ltv: 0.85, threshold: 0.90, protocol: 'Zentra (Citrea)' }
+    ];
+
+    for (const r of citreaRates) {
+      await db.upsertRate({
+        protocol: r.protocol,
+        assetPair: `${r.coll}/${r.debt}`,
+        rate: r.rate,
+        lastUpdateTimestamp: timestamp,
+        chain: 'Citrea',
+        collateralSymbol: r.coll,
+        debtSymbol: r.debt,
+        isRWA: false,
+        ltv: r.ltv,
+        liquidationThreshold: r.threshold,
+        liquidationPenalty: 0.05,
+        collateralCategory: 'BTC',
+        debtCategory: getAssetCategory(r.debt),
+        collateralPath: 'BTC ➔ ctBTC',
+        debtPath: null,
+        rateType: 'floating'
+      });
+      console.log(`[SUCCESS] ${r.protocol} ${r.coll}/${r.debt}: ${(r.rate * 100).toFixed(2)}%`);
+      successCount++;
+    }
+  } catch (e) {
+    console.error('Failed to sync Citrea manual rates:', e);
   }
 
   console.log(`\n--- Sync Finished ---`);

@@ -48,6 +48,7 @@ export interface MarketRate {
   debtCategory: string; // e.g., 'USD'
   collateralPath: string | null;
   debtPath: string | null;
+  rateType: 'fixed' | 'floating';
 }
 
 export interface DatabaseSchema {

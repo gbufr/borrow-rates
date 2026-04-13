@@ -141,6 +141,18 @@ async function start() {
     }
   }, 60000);
 
+  // Periodic GCS pull (every 30 minutes) to keep up with background sync
+  if (process.env.NODE_ENV === 'production') {
+    setInterval(async () => {
+      console.log('[API] Checking for database updates in GCS...');
+      try {
+        await GCSStorage.restore();
+      } catch (e) {
+        console.error('[API] Failed to pull database from GCS:', e);
+      }
+    }, 30 * 60 * 1000);
+  }
+
   app.listen(port, () => {
     console.log(`API Server running at http://localhost:${port}`);
   });

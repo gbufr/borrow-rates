@@ -159,7 +159,8 @@ export class AaveScanner implements ProtocolScanner {
             collateralCategory: 'N/A',
             debtCategory: 'N/A',
             collateralPath: null,
-            debtPath: null
+            debtPath: null,
+            rateType: 'floating'
           });
         }
       } catch (e) {

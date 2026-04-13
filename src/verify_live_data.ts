@@ -21,8 +21,11 @@ async function verify() {
   for (const scanner of scanners) {
     try {
       console.log(`\nProtocol: ${scanner.getName()}`);
-      const stats = await scanner.getGlobalStats();
-      console.log(`Global Stats: TVL $${(stats.tvl / 1e6).toFixed(2)}M, Borrowed $${(stats.totalBorrowed / 1e6).toFixed(2)}M`);
+      // @ts-ignore - Some scanners may not implement this
+      const stats = await (scanner as any).getGlobalStats?.();
+      if (stats) {
+        console.log(`Global Stats: TVL $${(stats.tvl / 1e6).toFixed(2)}M, Borrowed $${(stats.totalBorrowed / 1e6).toFixed(2)}M`);
+      }
       
       const rate = await scanner.getMarketRate('0x...', '0x...', 'ETH-A');
       console.log(`Market Rate: ${rate}`);

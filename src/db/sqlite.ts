@@ -89,6 +89,13 @@ export class SQLiteAdapter implements ILoanRepository {
         .addColumn('liquidationPenalty', 'float4')
         .execute();
     } catch (e) {}
+
+    try {
+      await this.db.schema
+        .alterTable('rates')
+        .addColumn('rateType', 'text')
+        .execute();
+    } catch (e) {}
   }
 
   async upsertPosition(position: LoanPosition): Promise<void> {

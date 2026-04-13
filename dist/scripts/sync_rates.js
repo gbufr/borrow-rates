@@ -1,0 +1,176 @@
+import { getDatabaseAdapter } from '../db/index';
+import { MorphoScanner } from '../protocols/morpho';
+import { AaveScanner } from '../protocols/aave';
+import { LiquityScanner } from '../protocols/liquity';
+import { LiquityV2Scanner } from '../protocols/liquityV2';
+import { SkyScanner } from '../protocols/sky';
+import { MakerScanner } from '../protocols/maker';
+import { SolanaScanner } from '../protocols/solana';
+import { MoonwellScanner } from '../protocols/moonwell';
+import { getAssetCategory, getAssetPath } from '../utils/assets';
+import { getAddress } from '../utils/rpc';
+import { GCSStorage } from '../utils/gcs';
+const ASSETS = {
+    WETH: { symbol: 'WETH', address: getAddress('0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2') },
+    WBTC: { symbol: 'WBTC', address: getAddress('0x2260FAC5E5542a773Aa44fBCfedF7C193bc2C599') },
+    cbBTC: { symbol: 'cbBTC', address: getAddress('0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf') },
+    wstETH: { symbol: 'wstETH', address: getAddress('0x7f39C581F595B53c5cb19bD0b3f8DA6c935E2Ca0') },
+    weETH: { symbol: 'weETH', address: getAddress('0xCd5fE23C85820F7B72D0926FC9b05b43E359b7ee') },
+    USDC: { symbol: 'USDC', address: getAddress('0xA0b86991c6218b36c1d19D4a2e9eb0cE3606eb48') },
+    USDC_BASE: { symbol: 'USDC', address: getAddress('0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913') },
+    USDT: { symbol: 'USDT', address: getAddress('0xdAC17F958D2ee523a2206206994597C13D831ec7') },
+    DAI: { symbol: 'DAI', address: getAddress('0x6B175474E89094C44Da98B954EedeAC495271d0F') },
+    USDS: { symbol: 'USDS', address: getAddress('0xdC035D45d973E3EC169d2276DDab16f1e407384F') },
+    BOLD: { symbol: 'BOLD', address: getAddress('0x0000000000000000000000000000000000000000') }, // Placeholder if not live
+    LUSD: { symbol: 'LUSD', address: getAddress('0x5f98805A4e8be255a32880FDeC7F6728C6568bA0') },
+};
+const PAIRS = [
+    // WETH Collateral
+    { coll: ASSETS.WETH, debt: ASSETS.USDC },
+    { coll: ASSETS.WETH, debt: ASSETS.USDT },
+    { coll: ASSETS.WETH, debt: ASSETS.DAI },
+    { coll: ASSETS.WETH, debt: ASSETS.USDS },
+    { coll: ASSETS.WETH, debt: ASSETS.BOLD },
+    { coll: ASSETS.WETH, debt: ASSETS.LUSD },
+    // WBTC / cbBTC Collateral
+    { coll: ASSETS.WBTC, debt: ASSETS.USDC },
+    { coll: ASSETS.WBTC, debt: ASSETS.DAI },
+    { coll: ASSETS.cbBTC, debt: ASSETS.USDC },
+    // LST Collateral
+    { coll: ASSETS.wstETH, debt: ASSETS.USDS },
+    { coll: ASSETS.wstETH, debt: ASSETS.BOLD },
+    { coll: ASSETS.weETH, debt: ASSETS.USDS },
+];
+async function syncAllRates() {
+    console.log('--- Starting Comprehensive Interest Rate Sync ---');
+    if (process.env.NODE_ENV === 'production') {
+        await GCSStorage.restore();
+    }
+    const db = await getDatabaseAdapter();
+    const scanners = [
+        // Ethereum Mainnet
+        new MorphoScanner(db, 'Ethereum'),
+        new AaveScanner(db, 'Ethereum'),
+        new LiquityScanner(db),
+        new LiquityV2Scanner(db),
+        new SkyScanner(db),
+        new MakerScanner(db),
+        // Base
+        new MorphoScanner(db, 'Base'),
+        new AaveScanner(db, 'Base'),
+        new MoonwellScanner(db),
+        // Arbitrum
+        new AaveScanner(db, 'Arbitrum'),
+        new MorphoScanner(db, 'Arbitrum'),
+        // Solana
+        new SolanaScanner(db),
+    ];
+    const timestamp = Math.floor(Date.now() / 1000);
+    let successCount = 0;
+    let failCount = 0;
+    for (const scanner of scanners) {
+        const protocolName = scanner.getName();
+        console.log(`\nChecking protocol: ${protocolName}`);
+        // Clear old rates to ensure no stale pairs remain
+        await db.deleteRatesForProtocol(protocolName);
+        if (scanner.syncAllRates) {
+            await scanner.syncAllRates(db);
+        }
+        // Only run specific pairs for scanners that don't have syncAllRates
+        // or to ensure specific critical pairs are tracked.
+        for (const pair of PAIRS) {
+            try {
+                let marketId = undefined;
+                // Protocol-specific market selection logic
+                if (protocolName.includes('Morpho Blue')) {
+                    // Morpho is handled by syncAllRates for broad coverage
+                    continue;
+                }
+                else if (protocolName.includes('Maker MCD')) {
+                    if (pair.debt.symbol !== 'DAI')
+                        continue; // Maker only lends DAI
+                    if (pair.coll.symbol === 'WETH')
+                        marketId = 'ETH-A';
+                    else if (pair.coll.symbol === 'WBTC')
+                        marketId = 'WBTC-A';
+                    else if (pair.coll.symbol === 'wstETH')
+                        marketId = 'WSTETH-A';
+                    else
+                        continue;
+                }
+                else if (protocolName.includes('Liquity V2')) {
+                    // Liquity V2 is handled by syncAllRates for branch discovery
+                    continue;
+                }
+                else if (protocolName.includes('Liquity V1')) {
+                    if (pair.coll.symbol !== 'WETH' || pair.debt.symbol !== 'LUSD')
+                        continue;
+                }
+                else if (protocolName.includes('Sky')) {
+                    if (pair.debt.symbol !== 'USDS')
+                        continue;
+                }
+                else if (protocolName.includes('Moonwell')) {
+                    continue; // Handled by syncAllRates
+                }
+                const collateralAddress = scanner.chain === 'Base' && pair.coll.symbol === 'USDC' ? getAddress('0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913') : pair.coll.address;
+                const debtAddress = scanner.chain === 'Base' && pair.debt.symbol === 'USDC' ? getAddress('0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913') : pair.debt.address;
+                const rate = await scanner.getMarketRate(collateralAddress, debtAddress, marketId);
+                if (rate !== null) {
+                    // Filter out extreme outliers (e.g., > 1000% APY) which are likely niche/broken markets
+                    if (rate > 10) {
+                        console.warn(`[SKIP] ${protocolName} ${pair.coll.symbol}/${pair.debt.symbol} rate too high: ${(rate * 100).toFixed(2)}%`);
+                        continue;
+                    }
+                    let ltv = null;
+                    let liqThreshold = null;
+                    let liqPenalty = null;
+                    if (protocolName.includes('Maker MCD') || protocolName.includes('Sky')) {
+                        liqThreshold = protocolName.includes('Sky') ? 1 / 1.30 : (pair.coll.symbol === 'WETH' ? 1 / 1.45 : (pair.coll.symbol === 'WBTC' ? 1 / 1.75 : 1 / 1.60));
+                        ltv = liqThreshold * 0.8; // Recommend 20% safety buffer for Maker/Sky
+                        liqPenalty = 0.13; // 13% Maker/Sky penalty
+                    }
+                    else if (protocolName.includes('Liquity V1')) {
+                        liqThreshold = 1 / 1.10;
+                        ltv = liqThreshold * 0.9; // Recommend 10% safety buffer for Liquity (more efficient)
+                        liqPenalty = 0.10; // 10% Liquity bonus
+                    }
+                    await db.upsertRate({
+                        protocol: protocolName,
+                        assetPair: `${pair.coll.symbol}/${pair.debt.symbol}`,
+                        rate: rate,
+                        lastUpdateTimestamp: timestamp,
+                        chain: scanner.chain || 'Ethereum',
+                        collateralSymbol: pair.coll.symbol,
+                        debtSymbol: pair.debt.symbol,
+                        isRWA: false,
+                        ltv: ltv,
+                        liquidationThreshold: liqThreshold,
+                        liquidationPenalty: liqPenalty,
+                        collateralCategory: getAssetCategory(pair.coll.symbol),
+                        debtCategory: getAssetCategory(pair.debt.symbol),
+                        collateralPath: getAssetPath(pair.coll.symbol),
+                        debtPath: getAssetPath(pair.debt.symbol)
+                    });
+                    console.log(`[SUCCESS] ${protocolName} ${pair.coll.symbol}/${pair.debt.symbol}: ${(rate * 100).toFixed(2)}%`);
+                    successCount++;
+                }
+            }
+            catch (e) {
+                console.error(`[ERROR] ${protocolName} ${pair.coll.symbol}/${pair.debt.symbol}: ${e.message || e}`);
+                failCount++;
+            }
+        }
+    }
+    console.log(`\n--- Sync Finished ---`);
+    console.log(`Success: ${successCount}`);
+    console.log(`Failed: ${failCount}`);
+    await db.close();
+    if (process.env.NODE_ENV === 'production') {
+        await GCSStorage.backup();
+    }
+}
+if (require.main === module) {
+    syncAllRates().catch(console.error);
+}
+export { syncAllRates };

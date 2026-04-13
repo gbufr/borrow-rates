@@ -1,17 +1,19 @@
-runtime: nodejs22
+runtime: nodejs20
 instance_class: F1
+entrypoint: npm start
 
 env_variables:
   NODE_ENV: "production"
-  GCS_BUCKET_NAME: "liquidax-db-backups"
+  GCS_BUCKET_NAME: "borrow-rates-db"
   # DATABASE_URL: "postgresql://user:pass@/dbname?host=/cloudsql/project:region:instance"
-  # ALCHEMY_API_KEY: "..."
+  ALCHEMY_API_KEY: "2scV0IeBl87hIlZet0UIlUayxWAjeZD6"
 
 # Increase scaling for sync script background execution if needed
 automatic_scaling:
   target_cpu_utilization: 0.65
   min_instances: 0
-  max_instances: 2
+  max_instances: 1
+  min_idle_instances: 0
 
 handlers:
   - url: /api/.*

@@ -10,12 +10,11 @@ Follow these steps to deploy your DeFi dashboard.
 - A **Google Cloud SQL (PostgreSQL)** instance.
 
 ### Configuration
-1.  **Database (Production Persistence)**: Since GAE standard has an ephemeral filesystem, we now use **Google Cloud Storage (GCS)** to persist the SQLite database.
-    - Create a GCS bucket (e.g., `liquidax-db-backups`).
-    - In your Google Cloud Console (App Engine > Settings) or via `app.yaml`, set:
-      - `GCS_BUCKET_NAME`: The name of your bucket.
-      - `ALCHEMY_API_KEY`: Your Alchemy API key.
-2.  **Service Account**: Ensure your App Engine default service account has **Storage Object Admin** permissions for the bucket.
+1.  **Environment (GAE Standard)**: We use the **App Engine Standard** environment (`F1` instances) for cost-efficiency.
+2.  **Persistence**: Since Standard has an ephemeral filesystem, we use **Google Cloud Storage (GCS)** to persist the SQLite database.
+    - Create a GCS bucket (e.g., `borrow-rates-db`).
+    - Update `app.yaml` with your `GCS_BUCKET_NAME` and `ALCHEMY_API_KEY`.
+3.  **Service Account**: Ensure your App Engine default service account has **Storage Object Admin** permissions for the bucket.
 3.  **Build & Deploy**:
     ```bash
     npm run build

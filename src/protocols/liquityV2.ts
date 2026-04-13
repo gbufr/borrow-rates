@@ -229,7 +229,8 @@ export class LiquityV2Scanner implements ProtocolScanner {
             collateralCategory: getAssetCategory(symbol),
             debtCategory: getAssetCategory('BOLD'),
             collateralPath: getAssetPath(symbol),
-            debtPath: getAssetPath('BOLD')
+            debtPath: getAssetPath('BOLD'),
+            rateType: 'fixed'
           });
           console.log(`[LIQUITY V2] Synced ${symbol}/BOLD: ${(rate * 100).toFixed(2)}%`);
         }

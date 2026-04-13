@@ -77,7 +77,8 @@ export class SolanaScanner implements ProtocolScanner {
               collateralCategory: 'SOL',
               debtCategory: getAssetCategory(symbol),
               collateralPath: null,
-              debtPath: null
+              debtPath: null,
+              rateType: 'floating'
             });
           }
         }
@@ -117,7 +118,8 @@ export class SolanaScanner implements ProtocolScanner {
               collateralCategory: 'SOL',
               debtCategory: getAssetCategory(symbol),
               collateralPath: null,
-              debtPath: null
+              debtPath: null,
+              rateType: 'floating'
             });
             console.log(`[SUCCESS] Solend ${symbol}: ${(borrowRate * 100).toFixed(2)}%`);
           }

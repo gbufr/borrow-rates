@@ -2,7 +2,8 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
+    "ignoreDeprecations": "5.0",
     "lib": ["ESNext", "DOM"],
     "strict": true,
     "esModuleInterop": true,

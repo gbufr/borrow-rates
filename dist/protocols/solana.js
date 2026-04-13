@@ -1,0 +1,116 @@
+import { getAssetCategory } from '../utils/assets';
+import axios from 'axios';
+const KAMINO_API_URL = 'https://api.kamino.finance/v2/markets/main';
+const SOLEND_API_URL = 'https://api.solend.fi/v2/markets/results?ids=main';
+export class SolanaScanner {
+    db;
+    status = {
+        isScanning: false,
+        lastSyncedBlock: 0,
+    };
+    chain = 'Solana';
+    constructor(db) {
+        this.db = db;
+    }
+    getName() {
+        return 'Kamino (Solana)';
+    }
+    getStatus() {
+        return this.status;
+    }
+    async scanGlobal() {
+        // Solana scan uses API, no block scanning needed for rates
+        await this.syncAllRates(this.db);
+    }
+    async scanIncremental() {
+        await this.syncAllRates(this.db);
+    }
+    async scanRange(fromBlock, toBlock) {
+        // API based, range not applicable
+    }
+    async getMarketRate(collateralAsset, debtAsset, marketId) {
+        // Rates are synced via syncAllRates
+        return null;
+    }
+    async syncAllRates(db) {
+        await this.syncKaminoRates(db);
+        await this.syncSolendRates(db);
+    }
+    async syncKaminoRates(db) {
+        console.log(`[${this.getName()}] Fetching Kamino rates...`);
+        try {
+            const response = await axios.get(KAMINO_API_URL);
+            const data = response.data;
+            const timestamp = Math.floor(Date.now() / 1000);
+            if (data && data.reserves) {
+                for (const reserve of data.reserves) {
+                    const symbol = reserve.token?.symbol;
+                    if (!symbol)
+                        continue;
+                    if (['SOL', 'USDC', 'USDT'].includes(symbol)) {
+                        const borrowRate = Number(reserve.borrowRate) / 100;
+                        await db.upsertRate({
+                            protocol: 'Kamino (Solana)',
+                            assetPair: `SOL/${symbol}`,
+                            rate: borrowRate,
+                            lastUpdateTimestamp: timestamp,
+                            chain: this.chain,
+                            collateralSymbol: 'SOL',
+                            debtSymbol: symbol,
+                            isRWA: false,
+                            ltv: reserve.maxLtv ? Number(reserve.maxLtv) / 100 : 0.8,
+                            liquidationThreshold: reserve.liquidationThreshold ? Number(reserve.liquidationThreshold) / 100 : 0.85,
+                            liquidationPenalty: 0.05,
+                            collateralCategory: 'SOL',
+                            debtCategory: getAssetCategory(symbol),
+                            collateralPath: null,
+                            debtPath: null
+                        });
+                    }
+                }
+            }
+        }
+        catch (e) {
+            console.error(`[Kamino] Failed:`, e.message);
+        }
+    }
+    async syncSolendRates(db) {
+        console.log(`[Solend] Fetching Solend rates...`);
+        try {
+            const response = await axios.get(SOLEND_API_URL);
+            const data = response.data;
+            const timestamp = Math.floor(Date.now() / 1000);
+            if (data && data.results && data.results[0]?.reserves) {
+                for (const reserve of data.results[0].reserves) {
+                    const symbol = reserve.asset;
+                    if (!symbol)
+                        continue;
+                    if (['SOL', 'USDC', 'USDT'].includes(symbol)) {
+                        const borrowRate = Number(reserve.rates.borrow) / 100;
+                        await db.upsertRate({
+                            protocol: 'Solend (Solana)',
+                            assetPair: `SOL/${symbol}`,
+                            rate: borrowRate,
+                            lastUpdateTimestamp: timestamp,
+                            chain: this.chain,
+                            collateralSymbol: 'SOL',
+                            debtSymbol: symbol,
+                            isRWA: false,
+                            ltv: 0.75,
+                            liquidationThreshold: 0.80,
+                            liquidationPenalty: 0.05,
+                            collateralCategory: 'SOL',
+                            debtCategory: getAssetCategory(symbol),
+                            collateralPath: null,
+                            debtPath: null
+                        });
+                        console.log(`[SUCCESS] Solend ${symbol}: ${(borrowRate * 100).toFixed(2)}%`);
+                    }
+                }
+            }
+        }
+        catch (e) {
+            console.error(`[Solend] Failed:`, e.message);
+        }
+    }
+}

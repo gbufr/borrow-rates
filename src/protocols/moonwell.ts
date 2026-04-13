@@ -12,6 +12,7 @@ const M_TOKENS: Record<string, { address: `0x${string}`; underlying: string; sym
   'mWETH': { address: getAddress('0x628ff693426583D9a7FB391E54366292F509D457'), underlying: 'WETH', symbol: 'WETH' },
   'mcbBTC': { address: getAddress('0xcB575382098675549887e2247164929D1302506B'), underlying: 'cbBTC', symbol: 'cbBTC' },
   'mUSDT': { address: getAddress('0x3865dfD4D2aCb8F0C601b69B8f5951dC55De9A0d'), underlying: 'USDT', symbol: 'USDT' },
+  'mLBTC': { address: getAddress('0x10ff57879482d83769c0378e937d573b9fc5d2ee'), underlying: 'LBTC', symbol: 'LBTC' },
 };
 
 export class MoonwellScanner implements ProtocolScanner {
@@ -88,7 +89,9 @@ export class MoonwellScanner implements ProtocolScanner {
             collateralSymbol: 'WETH',
             debtSymbol: market.symbol,
             isRWA: false,
-            ltv: 0.8, // Approximation, can be fetched from Comptroller
+            ltv: 0.8, // Approximation
+            liquidationThreshold: 0.85, 
+            liquidationPenalty: 0.05,
             collateralCategory: getAssetCategory('WETH'),
             debtCategory: getAssetCategory(market.symbol),
             collateralPath: getAssetPath('WETH'),

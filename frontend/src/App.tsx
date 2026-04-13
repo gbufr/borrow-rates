@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { 
   Search,
-  Filter
+  ChevronDown,
+  X
 } from 'lucide-react';
 import './index.css';
 
@@ -23,6 +24,7 @@ interface MarketRate {
   debtCategory: string;
   collateralPath: string | null;
   debtPath: string | null;
+  rateType: 'fixed' | 'floating';
 }
 
 function App() {
@@ -33,13 +35,14 @@ function App() {
   const [rates, setRates] = useState<MarketRate[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
   const [activeTab, setActiveTab] = useState('DeFi Rates');
+  const [rateTypeFilter, setRateTypeFilter] = useState<'All' | 'fixed' | 'floating'>('All');
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
 
-  const chains = ['All', 'Ethereum', 'Base', 'Arbitrum', 'Solana'];
-  const protocols = ['All', 'Morpho Blue', 'Aave V3', 'Maker MCD', 'Sky', 'Liquity V1', 'Liquity V2', 'Moonwell', 'Kamino', 'Solend'];
+  const chains = ['All', 'Ethereum', 'Base', 'Arbitrum', 'Solana', 'Citrea'];
+  const protocols = ['All', 'Morpho Blue', 'Aave V3', 'Maker MCD', 'Sky', 'Liquity V1', 'Liquity V2', 'Moonwell', 'Kamino', 'Solend', 'Zentra (Citrea)'];
   const debtTokens = ['All', 'DAI', 'USDC', 'USDT', 'GHO', 'LUSD', 'USDS', 'BOLD', 'ctUSD'];
-  const collateralAssets = ['All', 'WETH', 'WBTC', 'cbBTC', 'wstETH', 'weETH', 'LBTC', 'cBTC'];
+  const collateralAssets = ['All', 'WETH', 'WBTC', 'cbBTC', 'wstETH', 'weETH', 'LBTC', 'cBTC', 'WcBTC'];
 
   useEffect(() => {
     fetchData();
@@ -113,6 +116,62 @@ function App() {
     return `https://coinmarketcap.com/currencies/${slug}/`;
   };
 
+  const FilterDropdown = ({ title, options, current, onSelect, onClose }: { 
+    title: string, 
+    options: string[], 
+    current: string, 
+    onSelect: (v: string) => void,
+    onClose: () => void 
+  }) => (
+    <div className="filter-dropdown" style={{
+      position: 'absolute',
+      top: '100%',
+      left: 0,
+      background: '#111827', // Solid dark background for readability
+      border: '1px solid rgba(255, 255, 255, 0.15)',
+      borderRadius: '0.6rem',
+      boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.4)',
+      zIndex: 100,
+      minWidth: '160px',
+      padding: '0.5rem',
+      marginTop: '0.5rem',
+      backdropFilter: 'blur(20px)'
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem 0.5rem 0.5rem', borderBottom: '1px solid var(--glass-border)', marginBottom: '0.5rem' }}>
+        <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>{title}</span>
+        <X size={12} style={{ cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); onClose(); }} />
+      </div>
+      <div className="filter-options-list" style={{ maxHeight: '250px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+        {options.map(opt => (
+          <button
+            key={opt}
+            className={current === opt ? 'selected' : ''}
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelect(opt);
+              onClose();
+            }}
+            style={{
+              padding: '0.5rem 0.75rem',
+              textAlign: 'left',
+              background: current === opt ? 'rgba(34, 211, 238, 0.1)' : 'transparent',
+              color: current === opt ? 'var(--accent-primary)' : 'var(--text-secondary)',
+              border: 'none',
+              borderRadius: '0.4rem',
+              fontSize: '0.85rem',
+              cursor: 'pointer',
+              fontWeight: current === opt ? 600 : 400,
+              transition: 'all 0.2s',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            {opt.replace('MCD', '').replace('Blue', '')}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <div className="dashboard">
       <header className="header">
@@ -124,7 +183,7 @@ function App() {
       </header>
 
       <nav className="tab-nav" style={{ display: 'flex', gap: '1.5rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--glass-border)', padding: '0 0.5rem', flexWrap: 'wrap' }}>
-        {['DeFi Rates', 'BTC Native', 'Centralized', 'RWAs'].map(t => (
+        {['DeFi Rates', 'CeFi Rates', 'Bitcoin', 'RWAs'].map(t => (
           <button
             key={t}
             onClick={() => setActiveTab(t)}
@@ -146,160 +205,18 @@ function App() {
           </button>
         ))}
         
-        {activeTab === 'DeFi Rates' && (
-          <div className="search-container" style={{ marginLeft: 'auto', alignSelf: 'center', marginBottom: '0.5rem' }}>
-            <Search size={14} style={{ position: 'absolute', left: '0.8rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
-            <input 
-              type="text" 
-              placeholder="Search asset..." 
-              className="search-input"
-              style={{ padding: '0.4rem 0.8rem 0.4rem 2.2rem', fontSize: '0.85rem', width: '200px' }}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-        )}
+
       </nav>
 
-      <div className="tab-banner">
-        {activeTab === 'DeFi Rates' && (
-          <>
-            <strong>Global Markets</strong>
-            <span>Live DeFi borrow rates synchronized across Ethereum, Base, Solana, and Arbitrum ecosystems.</span>
-          </>
-        )}
-        {activeTab === 'BTC Native' && (
-          <>
-            <strong>Bitcoin Scaling</strong>
-            <span>Native Bitcoin vaults (Babylon, Citrea) remove bridge risk and enable trust-minimized borrowing.</span>
-          </>
-        )}
-        {activeTab === 'Centralized' && (
-          <>
-            <strong>CeFi Metrics</strong>
-            <span>Max LTV: Initial borrowing limit. | Liquidation: The threshold where your collateral is sold.</span>
-          </>
-        )}
-        {activeTab === 'RWAs' && (
-          <>
-            <strong>Real-World Assets</strong>
-            <span>Tokenized treasuries (BUIDL, USDY) provide low-volatility, yield-bearing institutional collateral.</span>
-          </>
-        )}
-      </div>
 
-      {activeTab === 'BTC Native' && (
-        <main className="section-content" style={{ animation: 'fadeIn 0.4s ease-out' }}>
-          <div className="card" style={{ padding: '2rem', marginBottom: '2rem' }}>
-            <h2 style={{ fontSize: '1.8rem', marginBottom: '1.5rem', color: 'var(--accent-primary)' }}>Bitcoin Native Ecosystem</h2>
-            
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
-              <div className="discovery-box" style={{ background: 'rgba(30, 41, 59, 0.4)', padding: '1.5rem', borderRadius: '1rem', border: '1px solid var(--glass-border)' }}>
-                <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-                  <span style={{ color: '#f7931a' }}>₿</span> Babylon TBV
-                </h3>
-                <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '1rem' }}>
-                  Non-custodial infrastructure for native Bitcoin staking and collateralization using BitVM and ZKPs.
-                </p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <div style={{ fontSize: '0.85rem', fontWeight: 600 }}>Available Borrow:</div>
-                  <ul style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', listStyle: 'none', padding: 0 }}>
-                    <li>• Lombard (LBTC) on Morpho/Moonwell</li>
-                    <li>• Solv (xSolvBTC) on Various Chains</li>
-                    <li>• Aave V4 Native Spoke (April 2026)</li>
-                  </ul>
-                </div>
-              </div>
 
-              <div className="discovery-box" style={{ background: 'rgba(30, 41, 59, 0.4)', padding: '1.5rem', borderRadius: '1rem', border: '1px solid var(--glass-border)' }}>
-                <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-                  <span style={{ color: '#22d3ee' }}>⚡</span> Citrea ZK-Rollup
-                </h3>
-                <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '1rem' }}>
-                  The first ZK-rollup on Bitcoin, settling with BitVM-based trust-minimized verification.
-                </p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <div style={{ fontSize: '0.85rem', fontWeight: 600 }}>Available Borrow:</div>
-                  <ul style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', listStyle: 'none', padding: 0 }}>
-                    <li>• Zentra Finance (Native Money Market)</li>
-                    <li>• Morpho (Isolated BTC Markets)</li>
-                    <li>• ctUSD Stablecoin Borrowing</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
 
-            <div style={{ marginTop: '2rem', padding: '1rem', background: 'rgba(96, 165, 250, 0.1)', borderRadius: '0.8rem', border: '1px solid var(--accent-primary)' }}>
-              <p style={{ fontSize: '0.9rem', color: 'var(--accent-primary)', textAlign: 'center' }}>
-                <strong>Tip:</strong> Native Bitcoin vaults remove bridge risk. Monitor Aave V4 and Morpho for the latest TBV deployments.
-              </p>
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="section-header">
-              <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <span style={{ color: '#f7931a', fontSize: '1.4rem' }}>₿</span> Bridged & Native BTC Borrow Rates
-              </h2>
-            </div>
-            <div className="table-container">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Protocol</th>
-                    <th>BTC Asset</th>
-                    <th>Debt</th>
-                    <th>Borrow rate</th>
-                    <th>LTV</th>
-                    <th>Liq. Threshold</th>
-                    <th>Liq. Penalty</th>
-                    <th>Type</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {rates
-                    .filter(r => r.collateralCategory === 'BTC')
-                    .map((r, i) => {
-                      const isNative = r.collateralSymbol === 'LBTC' || r.collateralSymbol === 'cBTC';
-                      return (
-                      <tr key={i}>
-                        <td style={{ fontWeight: 700 }}>{r.protocol.replace('MCD', '').replace('Blue', '')}</td>
-                        <td style={{ fontWeight: 600, color: 'var(--accent-primary)' }}>{r.collateralSymbol}</td>
-                        <td>{r.debtSymbol}</td>
-                        <td style={{ color: 'var(--text-primary)', fontWeight: 700 }}>{formatPercent(r.rate)}</td>
-                        <td>{r.ltv ? (r.ltv * 100).toFixed(1) + '%' : '—'}</td>
-                        <td>{r.liquidationThreshold ? (r.liquidationThreshold * 100).toFixed(1) + '%' : '—'}</td>
-                        <td style={{ color: '#ef4444' }}>{r.liquidationPenalty ? (r.liquidationPenalty * 100).toFixed(1) + '%' : '—'}</td>
-                        <td>
-                          <span className="badge" style={{ 
-                            background: isNative ? 'rgba(245, 158, 11, 0.2)' : 'rgba(156, 163, 175, 0.1)',
-                            color: isNative ? 'var(--btc-gold)' : 'var(--text-secondary)',
-                            border: `1px solid ${isNative ? 'var(--btc-gold)' : 'var(--glass-border)'}`,
-                            fontSize: '10px'
-                          }}>
-                            {isNative ? 'Native/TBV' : 'Bridged'}
-                          </span>
-                        </td>
-                      </tr>
-                    )})}
-                  {rates.filter(r => r.collateralCategory === 'BTC').length === 0 && (
-                    <tr>
-                      <td colSpan={6} style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>No BTC markets detected.</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </main>
-      )}
-
-      {activeTab === 'Centralized' && (
+      {activeTab === 'CeFi Rates' && (
         <main className="section-content" style={{ animation: 'fadeIn 0.4s ease-out' }}>
           <div className="card">
             <div className="section-header">
               <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <span style={{ color: 'var(--btc-gold)', fontSize: '1.4rem' }}>₿</span> Centralized BTC Borrowing (CeFi)
+                <span style={{ color: 'var(--accent-primary)', fontSize: '1.4rem' }}>🏦</span> CeFi Borrow Rates
               </h2>
             </div>
             <div className="table-container">
@@ -435,206 +352,85 @@ function App() {
           </div>
         </main>
       )}
+      {(activeTab === 'DeFi Rates' || activeTab === 'Bitcoin') && (
+        <div className="tab-content-wrapper">
 
-      {activeTab === 'DeFi Rates' && (
-        <>
-          <div className="filters-container" style={{ marginBottom: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div 
-              className="filter-summary" 
-              onClick={() => setShowFilters(!showFilters)}
-              style={{
-                padding: '0.75rem 1rem',
-                background: 'rgba(30, 41, 59, 0.4)',
-                borderRadius: '0.6rem',
-                border: '1px solid var(--glass-border)',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                cursor: 'pointer',
-                transition: 'all 0.2s'
-              }}
-            >
-              <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Chain</span>
-                  <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>{chain}</span>
-                </div>
-                <div style={{ width: '1px', height: '20px', background: 'var(--glass-border)' }}></div>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Protocol</span>
-                  <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>{protocol.replace('MCD', '').replace('Blue', '')}</span>
-                </div>
-                <div style={{ width: '1px', height: '20px', background: 'var(--glass-border)' }}></div>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Collateral</span>
-                  <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>{collateralAsset}</span>
-                </div>
-                <div style={{ width: '1px', height: '20px', background: 'var(--glass-border)' }}></div>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Debt</span>
-                  <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>{debtToken}</span>
-                </div>
-              </div>
-              <div 
-                style={{ 
-                  color: showFilters ? 'var(--accent-primary)' : 'var(--text-secondary)',
-                  padding: '0.5rem',
-                  borderRadius: '0.4rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  transition: 'all 0.2s',
-                  background: showFilters ? 'rgba(34, 211, 238, 0.1)' : 'transparent',
-                  border: '1px solid',
-                  borderColor: showFilters ? 'var(--accent-primary)' : 'transparent'
-                }}
-              >
-                <Filter size={18} />
-              </div>
-            </div>
-
-            {showFilters && (
-              <div className="filter-details" style={{ 
-                padding: '1.5rem', 
-                background: 'rgba(15, 23, 42, 0.4)', 
-                borderRadius: '0.6rem', 
-                border: '1px solid var(--glass-border)',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '1.25rem',
-                animation: 'slideDown 0.3s ease-out'
-              }}>
-                <div className="filter-group">
-                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Chains</div>
-                  <div className="chain-selector" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    {chains.map(c => (
-                      <button 
-                        key={c}
-                        className={`platform-btn ${chain === c ? 'active' : ''}`}
-                        onClick={() => setChain(c)}
-                        style={{
-                          padding: '0.4rem 0.8rem',
-                          borderRadius: '0.4rem',
-                          border: '1px solid var(--glass-border)',
-                          background: chain === c ? 'var(--accent-primary)' : 'rgba(30, 41, 59, 0.4)',
-                          color: chain === c ? 'var(--bg-dark)' : 'var(--text-secondary)',
-                          cursor: 'pointer',
-                          fontSize: '0.8125rem',
-                          fontWeight: 600,
-                          transition: 'all 0.2s'
-                        }}
-                      >
-                        {c}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="filter-group">
-                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Protocol</div>
-                  <div className="platform-selector" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    {protocols.map(p => (
-                      <button 
-                        key={p}
-                        className={`platform-btn ${protocol === p ? 'active' : ''}`}
-                        onClick={() => setProtocol(p)}
-                        style={{
-                          padding: '0.4rem 0.8rem',
-                          borderRadius: '0.4rem',
-                          border: '1px solid var(--glass-border)',
-                          background: protocol === p ? 'var(--accent-primary)' : 'rgba(30, 41, 59, 0.4)',
-                          color: protocol === p ? 'var(--bg-dark)' : 'var(--text-secondary)',
-                          cursor: 'pointer',
-                          fontSize: '0.8125rem',
-                          fontWeight: 600,
-                          transition: 'all 0.2s'
-                        }}
-                      >
-                        {p.replace('MCD', '').replace('Blue', '')}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="filter-group">
-                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Collateral</div>
-                  <div className="collateral-selector" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    {collateralAssets.map(t => (
-                      <button 
-                        key={t}
-                        className={`platform-btn ${collateralAsset === t ? 'active' : ''}`}
-                        onClick={() => setCollateralAsset(t)}
-                        style={{
-                          padding: '0.4rem 0.8rem',
-                          borderRadius: '0.4rem',
-                          border: '1px solid var(--glass-border)',
-                          background: collateralAsset === t ? 'var(--accent-primary)' : 'rgba(30, 41, 59, 0.4)',
-                          color: collateralAsset === t ? 'var(--bg-dark)' : 'var(--text-secondary)',
-                          cursor: 'pointer',
-                          fontSize: '0.8125rem',
-                          fontWeight: 600,
-                          transition: 'all 0.2s'
-                        }}
-                      >
-                        {t}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="filter-group">
-                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Debt Token</div>
-                  <div className="debt-selector" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    {debtTokens.map(t => (
-                      <button 
-                        key={t}
-                        className={`platform-btn ${debtToken === t ? 'active' : ''}`}
-                        onClick={() => setDebtToken(t)}
-                        style={{
-                          padding: '0.4rem 0.8rem',
-                          borderRadius: '0.4rem',
-                          border: '1px solid var(--glass-border)',
-                          background: debtToken === t ? 'var(--accent-primary)' : 'rgba(30, 41, 59, 0.4)',
-                          color: debtToken === t ? 'var(--bg-dark)' : 'var(--text-secondary)',
-                          cursor: 'pointer',
-                          fontSize: '0.8125rem',
-                          fontWeight: 600,
-                          transition: 'all 0.2s'
-                        }}
-                      >
-                        {t}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
 
           {loading ? (
             <div className="loading">Syncing with on-chain data...</div>
           ) : (
             <main className="section-content">
               <div className="card">
-                <div className="tab-banner" style={{ background: 'rgba(56, 189, 248, 0.1)', borderLeft: '4px solid var(--accent-primary)', padding: '0.75rem 1rem', marginBottom: '1.5rem', borderRadius: '4px' }}>
-                  <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-secondary)' }}>
-                    <strong>💡 Risk Intelligence Guide:</strong> <strong>Max LTV</strong> is the recommended safe borrow limit at loan opening. <strong>Liquidation Threshold</strong> is the hard limit where the protocol will seize your collateral. The space between these two is your <strong>Safety Buffer</strong> for price volatility.
-                  </p>
-                </div>
-                <div className="section-header">
-                  <h2>Live Borrow Rates in various markets</h2>
+                <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h2 style={{ margin: 0 }}>
+                    {activeTab === 'Bitcoin' ? (
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <span style={{ color: '#f7931a', fontSize: '1.4rem' }}>₿</span> Bridged & Native BTC Borrow Rates
+                      </span>
+                    ) : (
+                      "Live Borrow Rates in various markets"
+                    )}
+                  </h2>
+                  <div className="search-container" style={{ position: 'relative' }}>
+                    <Search size={14} style={{ position: 'absolute', left: '0.8rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+                    <input 
+                      type="text" 
+                      placeholder="Search asset..." 
+                      className="search-input"
+                      style={{ padding: '0.4rem 0.8rem 0.4rem 2.2rem', fontSize: '0.85rem', width: '200px', background: 'rgba(30, 41, 59, 0.4)', border: '1px solid var(--glass-border)', borderRadius: '0.4rem', color: 'var(--text-primary)' }}
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                    />
+                  </div>
                 </div>
                 <div className="table-container">
                   <table>
                     <thead>
                       <tr>
-                        <th>Protocol</th>
-                        <th>Collateral</th>
-                        <th>Debt</th>
+                        <th style={{ position: 'relative', cursor: 'pointer' }} onClick={() => setActiveFilter(activeFilter === 'chain' ? null : 'chain')}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                            Chain <ChevronDown size={12} style={{ opacity: chain !== 'All' ? 1 : 0.5, color: chain !== 'All' ? 'var(--accent-primary)' : 'inherit' }} />
+                          </div>
+                          {activeFilter === 'chain' && (
+                            <FilterDropdown title="Chain" options={chains} current={chain} onSelect={setChain} onClose={() => setActiveFilter(null)} />
+                          )}
+                        </th>
+                        <th style={{ position: 'relative', cursor: 'pointer' }} onClick={() => setActiveFilter(activeFilter === 'protocol' ? null : 'protocol')}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                            Protocol <ChevronDown size={12} style={{ opacity: protocol !== 'All' ? 1 : 0.5, color: protocol !== 'All' ? 'var(--accent-primary)' : 'inherit' }} />
+                          </div>
+                          {activeFilter === 'protocol' && (
+                            <FilterDropdown title="Protocol" options={protocols} current={protocol} onSelect={setProtocol} onClose={() => setActiveFilter(null)} />
+                          )}
+                        </th>
+                        <th style={{ position: 'relative', cursor: 'pointer' }} onClick={() => setActiveFilter(activeFilter === 'collateral' ? null : 'collateral')}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                            Collateral <ChevronDown size={12} style={{ opacity: collateralAsset !== 'All' ? 1 : 0.5, color: collateralAsset !== 'All' ? 'var(--accent-primary)' : 'inherit' }} />
+                          </div>
+                          {activeFilter === 'collateral' && (
+                            <FilterDropdown title="Collateral" options={collateralAssets} current={collateralAsset} onSelect={setCollateralAsset} onClose={() => setActiveFilter(null)} />
+                          )}
+                        </th>
+                        <th style={{ position: 'relative', cursor: 'pointer' }} onClick={() => setActiveFilter(activeFilter === 'debt' ? null : 'debt')}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                            Debt <ChevronDown size={12} style={{ opacity: debtToken !== 'All' ? 1 : 0.5, color: debtToken !== 'All' ? 'var(--accent-primary)' : 'inherit' }} />
+                          </div>
+                          {activeFilter === 'debt' && (
+                            <FilterDropdown title="Debt Token" options={debtTokens} current={debtToken} onSelect={setDebtToken} onClose={() => setActiveFilter(null)} />
+                          )}
+                        </th>
                         <th>Borrow rate</th>
                         <th>LTV</th>
                         <th>Liq. Threshold</th>
                         <th>Liq. Penalty</th>
+                        <th style={{ position: 'relative', cursor: 'pointer' }} onClick={() => setActiveFilter(activeFilter === 'rateType' ? null : 'rateType')}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                            Rate Type <ChevronDown size={12} style={{ opacity: rateTypeFilter !== 'All' ? 1 : 0.5, color: rateTypeFilter !== 'All' ? 'var(--accent-primary)' : 'inherit' }} />
+                          </div>
+                          {activeFilter === 'rateType' && (
+                            <FilterDropdown title="Rate Type" options={['All', 'fixed', 'floating']} current={rateTypeFilter} onSelect={(v) => setRateTypeFilter(v as any)} onClose={() => setActiveFilter(null)} />
+                          )}
+                        </th>
                         <th>Updated</th>
                       </tr>
                     </thead>
@@ -646,7 +442,9 @@ function App() {
                           const matchesChain = chain === 'All' || r.chain === chain;
                           const matchesCollateral = collateralAsset === 'All' || r.collateralSymbol === collateralAsset;
                           const matchesDebt = debtToken === 'All' || r.debtSymbol === debtToken;
-                          return matchesSearch && matchesProtocol && matchesChain && matchesCollateral && matchesDebt;
+                          const matchesCategory = activeTab === 'Bitcoin' ? r.collateralCategory === 'BTC' : true;
+                          const matchesRateType = rateTypeFilter === 'All' || r.rateType === rateTypeFilter;
+                          return matchesSearch && matchesProtocol && matchesChain && matchesCollateral && matchesDebt && matchesCategory && matchesRateType;
                         })
                         .sort((a, b) => {
                           const categoryPriority: Record<string, number> = {
@@ -665,12 +463,12 @@ function App() {
                         })
                         .map((r, i) => (
                         <tr key={i}>
+                          <td style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>{r.chain}</td>
                           <td style={{ fontWeight: 700 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                               {r.protocol.replace('MCD', '').replace('Blue', '')}
                               {!!r.isRWA && <span className="badge" style={{ background: 'var(--rwa-magenta)', color: '#fff', fontSize: '9px', padding: '1px 4px' }}>RWA</span>}
                             </div>
-                            <div style={{ fontSize: '10px', opacity: 0.6, fontWeight: 400 }}>{r.chain}</div>
                           </td>
                           <td>
                             <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -717,6 +515,16 @@ function App() {
                             {r.liquidationPenalty ? (r.liquidationPenalty * 100).toFixed(1) + '%' : '—'}
                           </td>
                           <td>
+                            <span style={{ 
+                              fontSize: '11px', 
+                              fontWeight: 600, 
+                              color: r.rateType === 'fixed' ? '#34d399' : '#60a5fa',
+                              textTransform: 'capitalize'
+                            }}>
+                              {r.rateType || 'Floating'}
+                            </span>
+                          </td>
+                          <td>
                             <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
                               {Math.floor((Date.now() / 1000 - r.lastUpdateTimestamp) / 60)}m ago
                             </span>
@@ -733,10 +541,58 @@ function App() {
                     </tbody>
                   </table>
                 </div>
+                {activeTab === 'Bitcoin' && (
+                  <div style={{ padding: '2rem', marginTop: '2rem', borderTop: '1px solid var(--glass-border)' }}>
+                    <h2 style={{ fontSize: '1.8rem', marginBottom: '1.5rem', color: 'var(--accent-primary)' }}>Bitcoin Native Ecosystem</h2>
+                    
+                    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) minmax(300px, 1fr)', gap: '2rem' }}>
+                      <div className="discovery-box" style={{ background: 'rgba(30, 41, 59, 0.4)', padding: '1.5rem', borderRadius: '1rem', border: '1px solid var(--glass-border)' }}>
+                        <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                          <span style={{ color: '#f7931a' }}>₿</span> Babylon TBV
+                        </h3>
+                        <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '1rem' }}>
+                          Non-custodial infrastructure for native Bitcoin staking and collateralization using BitVM and ZKPs.
+                        </p>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                          <div style={{ fontSize: '0.85rem', fontWeight: 600 }}>Available Borrow:</div>
+                          <ul style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', listStyle: 'none', padding: 0 }}>
+                            <li>• Lombard (LBTC) on Morpho/Moonwell</li>
+                            <li>• Solv (xSolvBTC) on Various Chains</li>
+                            <li>• Aave V4 Native Spoke (April 2026)</li>
+                          </ul>
+                        </div>
+                      </div>
+
+                      <div className="discovery-box" style={{ background: 'rgba(30, 41, 59, 0.4)', padding: '1.5rem', borderRadius: '1rem', border: '1px solid var(--glass-border)' }}>
+                        <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                          <span style={{ color: '#22d3ee' }}>⚡</span> Citrea ZK-Rollup
+                        </h3>
+                        <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '1rem' }}>
+                          The first ZK-rollup on Bitcoin, settling with BitVM-based trust-minimized verification.
+                        </p>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                          <div style={{ fontSize: '0.85rem', fontWeight: 600 }}>Available Borrow:</div>
+                          <ul style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', listStyle: 'none', padding: 0 }}>
+                            <li>• Zentra Finance (Native Money Market)</li>
+                            <li>• Morpho (Isolated BTC Markets)</li>
+                            <li>• ctUSD Stablecoin Borrowing</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style={{ marginTop: '2rem', padding: '1rem', background: 'rgba(96, 165, 250, 0.1)', borderRadius: '0.8rem', border: '1px solid var(--accent-primary)' }}>
+                      <p style={{ fontSize: '0.9rem', color: 'var(--accent-primary)', textAlign: 'center' }}>
+                        <strong>Tip:</strong> Native Bitcoin vaults remove bridge risk. Monitor Aave V4 and Morpho for the latest TBV deployments.
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </main>
           )}
-        </>
+
+        </div>
       )}
     </div>
   );
