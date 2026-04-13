@@ -290,36 +290,36 @@ function App() {
                 </thead>
                 <tbody>
                   <tr>
-                    <td style={{ fontWeight: 700 }}>Coinbase</td>
-                    <td>BTC (Native)</td>
-                    <td>USDC</td>
-                    <td style={{ color: 'var(--text-primary)', fontWeight: 700 }}>~8.75%</td>
-                    <td>75%</td>
-                    <td>86%</td>
+                    <td data-label="Platform" style={{ fontWeight: 700 }}>Coinbase</td>
+                    <td data-label="Collateral">BTC (Native)</td>
+                    <td data-label="Debt">USDC</td>
+                    <td data-label="Rate (APR)" style={{ color: 'var(--text-primary)', fontWeight: 700 }}>~8.75%</td>
+                    <td data-label="Max LTV">75%</td>
+                    <td data-label="Liquidation">86%</td>
                   </tr>
                   <tr>
-                    <td style={{ fontWeight: 700 }}>Binance</td>
-                    <td>BTC (Native)</td>
-                    <td>USDT</td>
-                    <td style={{ color: 'var(--text-primary)', fontWeight: 700 }}>Variable (5-12%)</td>
-                    <td>80%</td>
-                    <td>90%</td>
+                    <td data-label="Platform" style={{ fontWeight: 700 }}>Binance</td>
+                    <td data-label="Collateral">BTC (Native)</td>
+                    <td data-label="Debt">USDT</td>
+                    <td data-label="Rate (APR)" style={{ color: 'var(--text-primary)', fontWeight: 700 }}>Variable (5-12%)</td>
+                    <td data-label="Max LTV">80%</td>
+                    <td data-label="Liquidation">90%</td>
                   </tr>
                   <tr>
-                    <td style={{ fontWeight: 700 }}>Crypto.com</td>
-                    <td>BTC (Native)</td>
-                    <td>USDC</td>
-                    <td style={{ color: 'var(--text-primary)', fontWeight: 700 }}>~8.00%</td>
-                    <td>50%</td>
-                    <td>75%</td>
+                    <td data-label="Platform" style={{ fontWeight: 700 }}>Crypto.com</td>
+                    <td data-label="Collateral">BTC (Native)</td>
+                    <td data-label="Debt">USDC</td>
+                    <td data-label="Rate (APR)" style={{ color: 'var(--text-primary)', fontWeight: 700 }}>~8.00%</td>
+                    <td data-label="Max LTV">50%</td>
+                    <td data-label="Liquidation">75%</td>
                   </tr>
                   <tr>
-                    <td style={{ fontWeight: 700 }}>Nexo</td>
-                    <td>BTC (Native)</td>
-                    <td>USDT/USDC</td>
-                    <td style={{ color: 'var(--text-primary)', fontWeight: 700 }}>~7.9% - 13.9%</td>
-                    <td>50%</td>
-                    <td>83.33%</td>
+                    <td data-label="Platform" style={{ fontWeight: 700 }}>Nexo</td>
+                    <td data-label="Collateral">BTC (Native)</td>
+                    <td data-label="Debt">USDT/USDC</td>
+                    <td data-label="Rate (APR)" style={{ color: 'var(--text-primary)', fontWeight: 700 }}>~7.9% - 13.9%</td>
+                    <td data-label="Max LTV">50%</td>
+                    <td data-label="Liquidation">83.33%</td>
                   </tr>
                 </tbody>
               </table>
@@ -354,48 +354,48 @@ function App() {
                 </thead>
                 <tbody>
                   <tr>
-                    <td style={{ fontWeight: 700 }}>Morpho</td>
-                    <td style={{ fontWeight: 600 }}>
+                    <td data-label="Protocol" style={{ fontWeight: 700 }}>Morpho</td>
+                    <td data-label="RWA Collateral" style={{ fontWeight: 600 }}>
                       <a href="https://www.blackrock.com/us/individual/products/335207/blackrock-usd-institutional-digital-liquidity-fund" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-primary)', textDecoration: 'none' }}>BUIDL (BlackRock)</a>
                     </td>
-                    <td>USDC</td>
-                    <td style={{ color: 'var(--text-primary)', fontWeight: 700 }}>~5.20%</td>
-                    <td>80%</td>
-                    <td>86%</td>
-                    <td><span className="badge" style={{ background: 'rgba(249, 115, 22, 0.1)', color: '#f97316', border: '1px solid #f97316', fontSize: '10px' }}>KYC Required</span></td>
+                    <td data-label="Debt Asset">USDC</td>
+                    <td data-label="Borrow Rate" style={{ color: 'var(--text-primary)', fontWeight: 700 }}>~5.20%</td>
+                    <td data-label="Max LTV">80%</td>
+                    <td data-label="Liq. Threshold">86%</td>
+                    <td data-label="Access"><span className="badge" style={{ background: 'rgba(249, 115, 22, 0.1)', color: '#f97316', border: '1px solid #f97316', fontSize: '10px' }}>KYC Required</span></td>
                   </tr>
                   <tr>
-                    <td style={{ fontWeight: 700 }}>Aave (Horizon)</td>
-                    <td style={{ fontWeight: 600 }}>
+                    <td data-label="Protocol" style={{ fontWeight: 700 }}>Aave (Horizon)</td>
+                    <td data-label="RWA Collateral" style={{ fontWeight: 600 }}>
                       <a href="https://coinmarketcap.com/currencies/ondo-ousg/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-primary)', textDecoration: 'none' }}>Ondo OUSG</a>
                     </td>
-                    <td>GHO</td>
-                    <td style={{ color: 'var(--text-primary)', fontWeight: 700 }}>~5.50%</td>
-                    <td>85%</td>
-                    <td>90%</td>
-                    <td><span className="badge" style={{ background: 'rgba(236, 72, 153, 0.1)', color: '#ec4899', border: '1px solid #ec4899', fontSize: '10px' }}>Institutional</span></td>
+                    <td data-label="Debt Asset">GHO</td>
+                    <td data-label="Borrow Rate" style={{ color: 'var(--text-primary)', fontWeight: 700 }}>~5.50%</td>
+                    <td data-label="Max LTV">85%</td>
+                    <td data-label="Liq. Threshold">90%</td>
+                    <td data-label="Access"><span className="badge" style={{ background: 'rgba(236, 72, 153, 0.1)', color: '#ec4899', border: '1px solid #ec4899', fontSize: '10px' }}>Institutional</span></td>
                   </tr>
                   <tr>
-                    <td style={{ fontWeight: 700 }}>Flux Finance</td>
-                    <td style={{ fontWeight: 600 }}>
+                    <td data-label="Protocol" style={{ fontWeight: 700 }}>Flux Finance</td>
+                    <td data-label="RWA Collateral" style={{ fontWeight: 600 }}>
                       <a href="https://coinmarketcap.com/currencies/ondo-usdy/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-primary)', textDecoration: 'none' }}>Ondo USDY</a>
                     </td>
-                    <td>fUSDC</td>
-                    <td style={{ color: 'var(--text-primary)', fontWeight: 700 }}>~5.85%</td>
-                    <td>85%</td>
-                    <td>92%</td>
-                    <td><span className="badge" style={{ background: 'rgba(52, 211, 153, 0.1)', color: '#34d399', border: '1px solid #34d399', fontSize: '10px' }}>Permissionless</span></td>
+                    <td data-label="Debt Asset">fUSDC</td>
+                    <td data-label="Borrow Rate" style={{ color: 'var(--text-primary)', fontWeight: 700 }}>~5.85%</td>
+                    <td data-label="Max LTV">85%</td>
+                    <td data-label="Liq. Threshold">92%</td>
+                    <td data-label="Access"><span className="badge" style={{ background: 'rgba(52, 211, 153, 0.1)', color: '#34d399', border: '1px solid #34d399', fontSize: '10px' }}>Permissionless</span></td>
                   </tr>
                   <tr>
-                    <td style={{ fontWeight: 700 }}>Morpho</td>
-                    <td style={{ fontWeight: 600 }}>
+                    <td data-label="Protocol" style={{ fontWeight: 700 }}>Morpho</td>
+                    <td data-label="RWA Collateral" style={{ fontWeight: 600 }}>
                       <a href="https://superstate.co/ustb" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-primary)', textDecoration: 'none' }}>Superstate USTB</a>
                     </td>
-                    <td>USDC</td>
-                    <td style={{ color: 'var(--text-primary)', fontWeight: 700 }}>~5.15%</td>
-                    <td>90%</td>
-                    <td>94.5%</td>
-                    <td><span className="badge" style={{ background: 'rgba(249, 115, 22, 0.1)', color: '#f97316', border: '1px solid #f97316', fontSize: '10px' }}>KYC Required</span></td>
+                    <td data-label="Debt Asset">USDC</td>
+                    <td data-label="Borrow Rate" style={{ color: 'var(--text-primary)', fontWeight: 700 }}>~5.15%</td>
+                    <td data-label="Max LTV">90%</td>
+                    <td data-label="Liq. Threshold">94.5%</td>
+                    <td data-label="Access"><span className="badge" style={{ background: 'rgba(249, 115, 22, 0.1)', color: '#f97316', border: '1px solid #f97316', fontSize: '10px' }}>KYC Required</span></td>
                   </tr>
                 </tbody>
               </table>
@@ -521,14 +521,14 @@ function App() {
                         })
                         .map((r, i) => (
                         <tr key={i}>
-                          <td style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>{r.chain}</td>
-                          <td style={{ fontWeight: 700 }}>
+                          <td data-label="Chain" style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>{r.chain}</td>
+                          <td data-label="Protocol" style={{ fontWeight: 700 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                               {r.protocol.replace('MCD', '').replace('Blue', '')}
                               {!!r.isRWA && <span className="badge" style={{ background: 'var(--rwa-magenta)', color: '#fff', fontSize: '9px', padding: '1px 4px' }}>RWA</span>}
                             </div>
                           </td>
-                          <td>
+                          <td data-label="Collateral">
                             <div style={{ display: 'flex', flexDirection: 'column' }}>
                               <a 
                                 href={getCMCLink(r.collateralSymbol)} 
@@ -545,7 +545,7 @@ function App() {
 
                             </div>
                           </td>
-                          <td>
+                          <td data-label="Debt">
                             <div style={{ display: 'flex', flexDirection: 'column' }}>
                               <a 
                                 href={getCMCLink(r.debtSymbol)} 
@@ -562,17 +562,17 @@ function App() {
 
                             </div>
                           </td>
-                          <td style={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: '1.1rem' }}>{formatPercent(r.rate)}</td>
-                          <td style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>
+                          <td data-label="Borrow Rate" style={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: '1.1rem' }}>{formatPercent(r.rate)}</td>
+                          <td data-label="LTV" style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>
                             {r.ltv ? (r.ltv * 100).toFixed(1) + '%' : '—'}
                           </td>
-                          <td style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>
+                          <td data-label="Liq. Threshold" style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>
                             {r.liquidationThreshold ? (r.liquidationThreshold * 100).toFixed(1) + '%' : '—'}
                           </td>
-                          <td style={{ color: '#ef4444', fontWeight: 600 }}>
+                          <td data-label="Liq. Penalty" style={{ color: '#ef4444', fontWeight: 600 }}>
                             {r.liquidationPenalty ? (r.liquidationPenalty * 100).toFixed(1) + '%' : '—'}
                           </td>
-                          <td>
+                          <td data-label="Rate Type">
                             <span style={{ 
                               fontSize: '11px', 
                               fontWeight: 600, 
@@ -582,7 +582,7 @@ function App() {
                               {r.rateType || 'Floating'}
                             </span>
                           </td>
-                          <td>
+                          <td data-label="Updated">
                             <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
                               {Math.floor((Date.now() / 1000 - r.lastUpdateTimestamp) / 60)}m ago
                             </span>
