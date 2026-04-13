@@ -1,0 +1,1222 @@
+
+> liquidax-app@1.0.0 sync-rates
+> tsx src/scripts/sync_rates.ts
+
+[dotenv@17.3.1] injecting env (2) from .env -- tip: 🛡️ auth for agents: https://vestauth.com
+[dotenv@17.3.1] injecting env (0) from .env -- tip: ⚙️  write to custom object with { processEnv: myObject }
+[dotenv@17.3.1] injecting env (0) from .env -- tip: 🛡️ auth for agents: https://vestauth.com
+--- Starting Comprehensive Interest Rate Sync ---
+
+Checking protocol: Morpho Blue (Ethereum)
+Discovering all popular Morpho Blue markets on Ethereum...
+(node:22484) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+Checking protocol: Aave V3 (Ethereum)
+Syncing all Aave V3 rates on Ethereum...
+[Aave V3 (Ethereum)] Failed to get reserves list: HTTP request failed.
+
+Status: 429
+URL: https://eth-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0xd1946dbc","to":"0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560
+  data:  0xd1946dbc
+ 
+Contract Call:
+  address:   0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560
+  function:  getReservesList()
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Too Many Requests
+Version: viem@2.47.6
+[Aave V3 (Ethereum)] Failed both Aave rate methods for 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48 on Ethereum: HTTP request failed.
+
+Status: 429
+URL: https://eth-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0x35ea6a75000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48","to":"0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560
+  data:  0x35ea6a75000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48
+ 
+Contract Call:
+  address:   0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560
+  function:  getReserveData(address asset)
+  args:                    (0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48)
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Too Many Requests
+Version: viem@2.47.6
+[Aave V3 (Ethereum)] Failed both Aave rate methods for 0xdAC17F958D2ee523a2206206994597C13D831ec7 on Ethereum: HTTP request failed.
+
+Status: 429
+URL: https://eth-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0x35ea6a75000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec7","to":"0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560
+  data:  0x35ea6a75000000000000000000000000dac17f958d2ee523a2206206994597c13d831ec7
+ 
+Contract Call:
+  address:   0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560
+  function:  getReserveData(address asset)
+  args:                    (0xdAC17F958D2ee523a2206206994597C13D831ec7)
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Too Many Requests
+Version: viem@2.47.6
+[Aave V3 (Ethereum)] Failed both Aave rate methods for 0x6B175474E89094C44Da98b954EedeAC495271d0F on Ethereum: HTTP request failed.
+
+Status: 429
+URL: https://eth-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0x35ea6a750000000000000000000000006b175474e89094c44da98b954eedeac495271d0f","to":"0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560
+  data:  0x35ea6a750000000000000000000000006b175474e89094c44da98b954eedeac495271d0f
+ 
+Contract Call:
+  address:   0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560
+  function:  getReserveData(address asset)
+  args:                    (0x6B175474E89094C44Da98b954EedeAC495271d0F)
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Too Many Requests
+Version: viem@2.47.6
+[Aave V3 (Ethereum)] Failed both Aave rate methods for 0xdC035D45d973E3EC169d2276DDab16f1e407384F on Ethereum: HTTP request failed.
+
+Status: 429
+URL: https://eth-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0x35ea6a75000000000000000000000000dc035d45d973e3ec169d2276ddab16f1e407384f","to":"0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560
+  data:  0x35ea6a75000000000000000000000000dc035d45d973e3ec169d2276ddab16f1e407384f
+ 
+Contract Call:
+  address:   0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560
+  function:  getReserveData(address asset)
+  args:                    (0xdC035D45d973E3EC169d2276DDab16f1e407384F)
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Too Many Requests
+Version: viem@2.47.6
+[Aave V3 (Ethereum)] Failed both Aave rate methods for 0x5f98805A4E8be255a32880FDeC7F6728C6568bA0 on Ethereum: HTTP request failed.
+
+Status: 429
+URL: https://eth-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0x35ea6a750000000000000000000000005f98805a4e8be255a32880fdec7f6728c6568ba0","to":"0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560
+  data:  0x35ea6a750000000000000000000000005f98805a4e8be255a32880fdec7f6728c6568ba0
+ 
+Contract Call:
+  address:   0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560
+  function:  getReserveData(address asset)
+  args:                    (0x5f98805A4E8be255a32880FDeC7F6728C6568bA0)
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Too Many Requests
+Version: viem@2.47.6
+[Aave V3 (Ethereum)] Failed both Aave rate methods for 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48 on Ethereum: HTTP request failed.
+
+Status: 429
+URL: https://eth-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0x35ea6a75000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48","to":"0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560
+  data:  0x35ea6a75000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48
+ 
+Contract Call:
+  address:   0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560
+  function:  getReserveData(address asset)
+  args:                    (0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48)
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Too Many Requests
+Version: viem@2.47.6
+[Aave V3 (Ethereum)] Failed both Aave rate methods for 0x6B175474E89094C44Da98b954EedeAC495271d0F on Ethereum: HTTP request failed.
+
+Status: 429
+URL: https://eth-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0x35ea6a750000000000000000000000006b175474e89094c44da98b954eedeac495271d0f","to":"0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560
+  data:  0x35ea6a750000000000000000000000006b175474e89094c44da98b954eedeac495271d0f
+ 
+Contract Call:
+  address:   0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560
+  function:  getReserveData(address asset)
+  args:                    (0x6B175474E89094C44Da98b954EedeAC495271d0F)
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Too Many Requests
+Version: viem@2.47.6
+[Aave V3 (Ethereum)] Failed both Aave rate methods for 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48 on Ethereum: HTTP request failed.
+
+Status: 429
+URL: https://eth-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0x35ea6a75000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48","to":"0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560
+  data:  0x35ea6a75000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48
+ 
+Contract Call:
+  address:   0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560
+  function:  getReserveData(address asset)
+  args:                    (0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48)
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Too Many Requests
+Version: viem@2.47.6
+[Aave V3 (Ethereum)] Failed both Aave rate methods for 0xdC035D45d973E3EC169d2276DDab16f1e407384F on Ethereum: HTTP request failed.
+
+Status: 429
+URL: https://eth-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0x35ea6a75000000000000000000000000dc035d45d973e3ec169d2276ddab16f1e407384f","to":"0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560
+  data:  0x35ea6a75000000000000000000000000dc035d45d973e3ec169d2276ddab16f1e407384f
+ 
+Contract Call:
+  address:   0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560
+  function:  getReserveData(address asset)
+  args:                    (0xdC035D45d973E3EC169d2276DDab16f1e407384F)
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Too Many Requests
+Version: viem@2.47.6
+[Aave V3 (Ethereum)] Failed both Aave rate methods for 0xdC035D45d973E3EC169d2276DDab16f1e407384F on Ethereum: HTTP request failed.
+
+Status: 429
+URL: https://eth-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0x35ea6a75000000000000000000000000dc035d45d973e3ec169d2276ddab16f1e407384f","to":"0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560
+  data:  0x35ea6a75000000000000000000000000dc035d45d973e3ec169d2276ddab16f1e407384f
+ 
+Contract Call:
+  address:   0x87870B2eC3AcdbfD0DD2072F2Fe2E116001f9560
+  function:  getReserveData(address asset)
+  args:                    (0xdC035D45d973E3EC169d2276DDab16f1e407384F)
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Too Many Requests
+Version: viem@2.47.6
+
+Checking protocol: Liquity V1 (Ethereum)
+[SUCCESS] Liquity V1 (Ethereum) WETH/LUSD: 0.00%
+
+Checking protocol: Liquity V2 (Ethereum)
+Discovering Liquity V2 branches and rates...
+Failed to sync Liquity V2 rates: ContractFunctionExecutionError: HTTP request failed.
+
+Status: 429
+URL: https://eth-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0x0bc17feb0000000000000000000000000000000000000000000000000000000000000000","to":"0xd99dE73b95236F69A559117ECD6F519Af780F3f7"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0xd99dE73b95236F69A559117ECD6F519Af780F3f7
+  data:  0x0bc17feb0000000000000000000000000000000000000000000000000000000000000000
+ 
+Contract Call:
+  address:   0xd99dE73b95236F69A559117ECD6F519Af780F3f7
+  function:  getTroveManager(uint256 _index)
+  args:                     (0)
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Too Many Requests
+Version: viem@2.47.6
+    at getContractError (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/errors/getContractError.ts:82:10)
+    at readContract (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/actions/public/readContract.ts:138:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async LiquityV2Scanner.syncAllRates (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/protocols/liquityV2.ts:189:30)
+    at async syncAllRates (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/scripts/sync_rates.ts:131:7) {
+  cause: CallExecutionError: HTTP request failed.
+  
+  Status: 429
+  URL: https://eth-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+  Request body: {"method":"eth_call","params":[{"data":"0x0bc17feb0000000000000000000000000000000000000000000000000000000000000000","to":"0xd99dE73b95236F69A559117ECD6F519Af780F3f7"},"latest"]}
+   
+  Raw Call Arguments:
+    to:    0xd99dE73b95236F69A559117ECD6F519Af780F3f7
+    data:  0x0bc17feb0000000000000000000000000000000000000000000000000000000000000000
+  
+  Details: Too Many Requests
+  Version: viem@2.47.6
+      at getCallError (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/errors/getCallError.ts:42:10)
+      at call (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/actions/public/call.ts:307:23)
+      at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async readContract (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/actions/public/readContract.ts:122:22)
+      at async LiquityV2Scanner.syncAllRates (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/protocols/liquityV2.ts:189:30)
+      at async syncAllRates (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/scripts/sync_rates.ts:131:7) {
+    cause: HttpRequestError: HTTP request failed.
+    
+    Status: 429
+    URL: https://eth-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+    Request body: {"method":"eth_call","params":[{"data":"0x0bc17feb0000000000000000000000000000000000000000000000000000000000000000","to":"0xd99dE73b95236F69A559117ECD6F519Af780F3f7"},"latest"]}
+    
+    Details: Too Many Requests
+    Version: viem@2.47.6
+        at Object.request (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/rpc/http.ts:166:17)
+        at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at async fn (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/clients/transports/http.ts:148:19)
+        at async request (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/clients/transports/http.ts:153:39)
+        at async delay.count.count (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/buildRequest.ts:153:22)
+        at async attemptRetry (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/promise/withRetry.ts:44:22) {
+      details: 'Too Many Requests',
+      docsPath: undefined,
+      metaMessages: [Array],
+      shortMessage: 'HTTP request failed.',
+      version: '2.47.6',
+      body: [Object],
+      headers: Headers {
+        date: 'Mon, 13 Apr 2026 20:18:24 GMT',
+        server: 'istio-envoy',
+        'content-length': '0'
+      },
+      status: 429,
+      url: 'https://eth-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6'
+    },
+    details: 'Too Many Requests',
+    docsPath: undefined,
+    metaMessages: [
+      'Status: 429',
+      'URL: https://eth-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6',
+      'Request body: {"method":"eth_call","params":[{"data":"0x0bc17feb0000000000000000000000000000000000000000000000000000000000000000","to":"0xd99dE73b95236F69A559117ECD6F519Af780F3f7"},"latest"]}',
+      ' ',
+      'Raw Call Arguments:',
+      '  to:    0xd99dE73b95236F69A559117ECD6F519Af780F3f7\n' +
+        '  data:  0x0bc17feb0000000000000000000000000000000000000000000000000000000000000000'
+    ],
+    shortMessage: 'HTTP request failed.',
+    version: '2.47.6'
+  },
+  details: 'Too Many Requests',
+  docsPath: '/docs/contract/readContract',
+  metaMessages: [
+    'Status: 429',
+    'URL: https://eth-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6',
+    'Request body: {"method":"eth_call","params":[{"data":"0x0bc17feb0000000000000000000000000000000000000000000000000000000000000000","to":"0xd99dE73b95236F69A559117ECD6F519Af780F3f7"},"latest"]}',
+    ' ',
+    'Raw Call Arguments:',
+    '  to:    0xd99dE73b95236F69A559117ECD6F519Af780F3f7\n' +
+      '  data:  0x0bc17feb0000000000000000000000000000000000000000000000000000000000000000',
+    ' ',
+    'Contract Call:',
+    '  address:   0xd99dE73b95236F69A559117ECD6F519Af780F3f7\n' +
+      '  function:  getTroveManager(uint256 _index)\n' +
+      '  args:                     (0)'
+  ],
+  shortMessage: 'HTTP request failed.',
+  version: '2.47.6',
+  abi: [
+    {
+      name: 'getTroveManager',
+      type: 'function',
+      stateMutability: 'view',
+      inputs: [Array],
+      outputs: [Array]
+    }
+  ],
+  args: [ 0n ],
+  contractAddress: '0xd99dE73b95236F69A559117ECD6F519Af780F3f7',
+  formattedArgs: undefined,
+  functionName: 'getTroveManager',
+  sender: undefined
+}
+
+Checking protocol: Sky (Ethereum)
+[SUCCESS] Sky (Ethereum) WETH/USDS: 6.50%
+[SUCCESS] Sky (Ethereum) wstETH/USDS: 6.50%
+[SUCCESS] Sky (Ethereum) weETH/USDS: 6.50%
+
+Checking protocol: Maker MCD (Ethereum)
+[SUCCESS] Maker MCD (Ethereum) WETH/DAI: 8.00%
+Failed to fetch Maker rate: ContractFunctionExecutionError: HTTP request failed.
+
+Status: 429
+URL: https://eth-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0xd9638d36574254432d410000000000000000000000000000000000000000000000000000","to":"0x19c0976f590D67707E62397C87829d896Dc0f1F1"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0x19c0976f590D67707E62397C87829d896Dc0f1F1
+  data:  0xd9638d36574254432d410000000000000000000000000000000000000000000000000000
+ 
+Contract Call:
+  address:   0x19c0976f590D67707E62397C87829d896Dc0f1F1
+  function:  ilks(bytes32)
+  args:          (0x574254432d410000000000000000000000000000000000000000000000000000)
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Too Many Requests
+Version: viem@2.47.6
+    at getContractError (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/errors/getContractError.ts:82:10)
+    at readContract (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/actions/public/readContract.ts:138:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MakerScanner.getMarketRate (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/protocols/maker.ts:77:29)
+    at async syncAllRates (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/scripts/sync_rates.ts:168:22) {
+  cause: CallExecutionError: HTTP request failed.
+  
+  Status: 429
+  URL: https://eth-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+  Request body: {"method":"eth_call","params":[{"data":"0xd9638d36574254432d410000000000000000000000000000000000000000000000000000","to":"0x19c0976f590D67707E62397C87829d896Dc0f1F1"},"latest"]}
+   
+  Raw Call Arguments:
+    to:    0x19c0976f590D67707E62397C87829d896Dc0f1F1
+    data:  0xd9638d36574254432d410000000000000000000000000000000000000000000000000000
+  
+  Details: Too Many Requests
+  Version: viem@2.47.6
+      at getCallError (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/errors/getCallError.ts:42:10)
+      at call (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/actions/public/call.ts:307:23)
+      at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async readContract (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/actions/public/readContract.ts:122:22)
+      at async MakerScanner.getMarketRate (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/protocols/maker.ts:77:29)
+      at async syncAllRates (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/scripts/sync_rates.ts:168:22) {
+    cause: HttpRequestError: HTTP request failed.
+    
+    Status: 429
+    URL: https://eth-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+    Request body: {"method":"eth_call","params":[{"data":"0xd9638d36574254432d410000000000000000000000000000000000000000000000000000","to":"0x19c0976f590D67707E62397C87829d896Dc0f1F1"},"latest"]}
+    
+    Details: Too Many Requests
+    Version: viem@2.47.6
+        at Object.request (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/rpc/http.ts:166:17)
+        at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at async fn (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/clients/transports/http.ts:148:19)
+        at async request (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/clients/transports/http.ts:153:39)
+        at async delay.count.count (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/buildRequest.ts:153:22)
+        at async attemptRetry (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/promise/withRetry.ts:44:22) {
+      details: 'Too Many Requests',
+      docsPath: undefined,
+      metaMessages: [Array],
+      shortMessage: 'HTTP request failed.',
+      version: '2.47.6',
+      body: [Object],
+      headers: Headers {
+        date: 'Mon, 13 Apr 2026 20:18:26 GMT',
+        server: 'istio-envoy',
+        'content-length': '0'
+      },
+      status: 429,
+      url: 'https://eth-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6'
+    },
+    details: 'Too Many Requests',
+    docsPath: undefined,
+    metaMessages: [
+      'Status: 429',
+      'URL: https://eth-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6',
+      'Request body: {"method":"eth_call","params":[{"data":"0xd9638d36574254432d410000000000000000000000000000000000000000000000000000","to":"0x19c0976f590D67707E62397C87829d896Dc0f1F1"},"latest"]}',
+      ' ',
+      'Raw Call Arguments:',
+      '  to:    0x19c0976f590D67707E62397C87829d896Dc0f1F1\n' +
+        '  data:  0xd9638d36574254432d410000000000000000000000000000000000000000000000000000'
+    ],
+    shortMessage: 'HTTP request failed.',
+    version: '2.47.6'
+  },
+  details: 'Too Many Requests',
+  docsPath: '/docs/contract/readContract',
+  metaMessages: [
+    'Status: 429',
+    'URL: https://eth-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6',
+    'Request body: {"method":"eth_call","params":[{"data":"0xd9638d36574254432d410000000000000000000000000000000000000000000000000000","to":"0x19c0976f590D67707E62397C87829d896Dc0f1F1"},"latest"]}',
+    ' ',
+    'Raw Call Arguments:',
+    '  to:    0x19c0976f590D67707E62397C87829d896Dc0f1F1\n' +
+      '  data:  0xd9638d36574254432d410000000000000000000000000000000000000000000000000000',
+    ' ',
+    'Contract Call:',
+    '  address:   0x19c0976f590D67707E62397C87829d896Dc0f1F1\n' +
+      '  function:  ilks(bytes32)\n' +
+      '  args:          (0x574254432d410000000000000000000000000000000000000000000000000000)'
+  ],
+  shortMessage: 'HTTP request failed.',
+  version: '2.47.6',
+  abi: [
+    {
+      name: 'ilks',
+      type: 'function',
+      stateMutability: 'view',
+      inputs: [Array],
+      outputs: [Array]
+    }
+  ],
+  args: [
+    '0x574254432d410000000000000000000000000000000000000000000000000000'
+  ],
+  contractAddress: '0x19c0976f590D67707E62397C87829d896Dc0f1F1',
+  formattedArgs: undefined,
+  functionName: 'ilks',
+  sender: undefined
+}
+
+Checking protocol: Morpho Blue (Base)
+Discovering all popular Morpho Blue markets on Base...
+
+Checking protocol: Aave V3 (Base)
+Syncing all Aave V3 rates on Base...
+[Aave V3 (Base)] Failed to get reserves list: HTTP request failed.
+
+Status: 429
+URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0xd1946dbc","to":"0xA238Dd80C259A72e81D7E4674A963912f6189913"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0xA238Dd80C259A72e81D7E4674A963912f6189913
+  data:  0xd1946dbc
+ 
+Contract Call:
+  address:   0xA238Dd80C259A72e81D7E4674A963912f6189913
+  function:  getReservesList()
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Too Many Requests
+Version: viem@2.47.6
+[Aave V3 (Base)] Failed both Aave rate methods for 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913 on Base: HTTP request failed.
+
+Status: 429
+URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0x35ea6a75000000000000000000000000833589fcd6edb6e08f4c7c32d4f71b54bda02913","to":"0xA238Dd80C259A72e81D7E4674A963912f6189913"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0xA238Dd80C259A72e81D7E4674A963912f6189913
+  data:  0x35ea6a75000000000000000000000000833589fcd6edb6e08f4c7c32d4f71b54bda02913
+ 
+Contract Call:
+  address:   0xA238Dd80C259A72e81D7E4674A963912f6189913
+  function:  getReserveData(address asset)
+  args:                    (0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913)
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Too Many Requests
+Version: viem@2.47.6
+[Aave V3 (Base)] Failed both Aave rate methods for 0x8ce0e41852445E16f73449339E0Ed887cBE8E8F5 on Base: HTTP request failed.
+
+Status: 429
+URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0x35ea6a750000000000000000000000008ce0e41852445e16f73449339e0ed887cbe8e8f5","to":"0xA238Dd80C259A72e81D7E4674A963912f6189913"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0xA238Dd80C259A72e81D7E4674A963912f6189913
+  data:  0x35ea6a750000000000000000000000008ce0e41852445e16f73449339e0ed887cbe8e8f5
+ 
+Contract Call:
+  address:   0xA238Dd80C259A72e81D7E4674A963912f6189913
+  function:  getReserveData(address asset)
+  args:                    (0x8ce0e41852445E16f73449339E0Ed887cBE8E8F5)
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Too Many Requests
+Version: viem@2.47.6
+[Aave V3 (Base)] Failed both Aave rate methods for 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913 on Base: HTTP request failed.
+
+Status: 429
+URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0x35ea6a75000000000000000000000000833589fcd6edb6e08f4c7c32d4f71b54bda02913","to":"0xA238Dd80C259A72e81D7E4674A963912f6189913"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0xA238Dd80C259A72e81D7E4674A963912f6189913
+  data:  0x35ea6a75000000000000000000000000833589fcd6edb6e08f4c7c32d4f71b54bda02913
+ 
+Contract Call:
+  address:   0xA238Dd80C259A72e81D7E4674A963912f6189913
+  function:  getReserveData(address asset)
+  args:                    (0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913)
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Too Many Requests
+Version: viem@2.47.6
+[Aave V3 (Base)] Failed both Aave rate methods for 0x8ce0e41852445E16f73449339E0Ed887cBE8E8F5 on Base: HTTP request failed.
+
+Status: 429
+URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0x35ea6a750000000000000000000000008ce0e41852445e16f73449339e0ed887cbe8e8f5","to":"0xA238Dd80C259A72e81D7E4674A963912f6189913"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0xA238Dd80C259A72e81D7E4674A963912f6189913
+  data:  0x35ea6a750000000000000000000000008ce0e41852445e16f73449339e0ed887cbe8e8f5
+ 
+Contract Call:
+  address:   0xA238Dd80C259A72e81D7E4674A963912f6189913
+  function:  getReserveData(address asset)
+  args:                    (0x8ce0e41852445E16f73449339E0Ed887cBE8E8F5)
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Too Many Requests
+Version: viem@2.47.6
+
+Checking protocol: Moonwell (Base)
+[Moonwell] Syncing all Moonwell rates on Base...
+[Moonwell] Failed to fetch rate for USDC: ContractFunctionExecutionError: HTTP request failed.
+
+Status: 429
+URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0xcd91801c","to":"0xEdc817A28E8B93B03976FBd4a3dDBc9f7D176c22"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0xEdc817A28E8B93B03976FBd4a3dDBc9f7D176c22
+  data:  0xcd91801c
+ 
+Contract Call:
+  address:   0xEdc817A28E8B93B03976FBd4a3dDBc9f7D176c22
+  function:  borrowRatePerTimestamp()
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Too Many Requests
+Version: viem@2.47.6
+    at getContractError (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/errors/getContractError.ts:82:10)
+    at readContract (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/actions/public/readContract.ts:138:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MoonwellScanner.getMarketRate (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/protocols/moonwell.ts:59:38)
+    at async MoonwellScanner.syncAllRates (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/protocols/moonwell.ts:81:22)
+    at async syncAllRates (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/scripts/sync_rates.ts:131:7) {
+  cause: CallExecutionError: HTTP request failed.
+  
+  Status: 429
+  URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+  Request body: {"method":"eth_call","params":[{"data":"0xcd91801c","to":"0xEdc817A28E8B93B03976FBd4a3dDBc9f7D176c22"},"latest"]}
+   
+  Raw Call Arguments:
+    to:    0xEdc817A28E8B93B03976FBd4a3dDBc9f7D176c22
+    data:  0xcd91801c
+  
+  Details: Too Many Requests
+  Version: viem@2.47.6
+      at getCallError (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/errors/getCallError.ts:42:10)
+      at call (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/actions/public/call.ts:307:23)
+      at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async readContract (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/actions/public/readContract.ts:122:22)
+      at async MoonwellScanner.getMarketRate (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/protocols/moonwell.ts:59:38)
+      at async MoonwellScanner.syncAllRates (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/protocols/moonwell.ts:81:22)
+      at async syncAllRates (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/scripts/sync_rates.ts:131:7) {
+    cause: HttpRequestError: HTTP request failed.
+    
+    Status: 429
+    URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+    Request body: {"method":"eth_call","params":[{"data":"0xcd91801c","to":"0xEdc817A28E8B93B03976FBd4a3dDBc9f7D176c22"},"latest"]}
+    
+    Details: Too Many Requests
+    Version: viem@2.47.6
+        at Object.request (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/rpc/http.ts:166:17)
+        at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at async fn (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/clients/transports/http.ts:148:19)
+        at async request (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/clients/transports/http.ts:153:39)
+        at async delay.count.count (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/buildRequest.ts:153:22)
+        at async attemptRetry (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/promise/withRetry.ts:44:22) {
+      details: 'Too Many Requests',
+      docsPath: undefined,
+      metaMessages: [Array],
+      shortMessage: 'HTTP request failed.',
+      version: '2.47.6',
+      body: [Object],
+      headers: Headers {
+        date: 'Mon, 13 Apr 2026 20:18:38 GMT',
+        server: 'istio-envoy',
+        'content-length': '0'
+      },
+      status: 429,
+      url: 'https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6'
+    },
+    details: 'Too Many Requests',
+    docsPath: undefined,
+    metaMessages: [
+      'Status: 429',
+      'URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6',
+      'Request body: {"method":"eth_call","params":[{"data":"0xcd91801c","to":"0xEdc817A28E8B93B03976FBd4a3dDBc9f7D176c22"},"latest"]}',
+      ' ',
+      'Raw Call Arguments:',
+      '  to:    0xEdc817A28E8B93B03976FBd4a3dDBc9f7D176c22\n' +
+        '  data:  0xcd91801c'
+    ],
+    shortMessage: 'HTTP request failed.',
+    version: '2.47.6'
+  },
+  details: 'Too Many Requests',
+  docsPath: '/docs/contract/readContract',
+  metaMessages: [
+    'Status: 429',
+    'URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6',
+    'Request body: {"method":"eth_call","params":[{"data":"0xcd91801c","to":"0xEdc817A28E8B93B03976FBd4a3dDBc9f7D176c22"},"latest"]}',
+    ' ',
+    'Raw Call Arguments:',
+    '  to:    0xEdc817A28E8B93B03976FBd4a3dDBc9f7D176c22\n  data:  0xcd91801c',
+    ' ',
+    'Contract Call:',
+    '  address:   0xEdc817A28E8B93B03976FBd4a3dDBc9f7D176c22\n' +
+      '  function:  borrowRatePerTimestamp()'
+  ],
+  shortMessage: 'HTTP request failed.',
+  version: '2.47.6',
+  abi: [
+    {
+      name: 'borrowRatePerTimestamp',
+      type: 'function',
+      stateMutability: 'view',
+      inputs: [],
+      outputs: [Array]
+    }
+  ],
+  args: undefined,
+  contractAddress: '0xEdc817A28E8B93B03976FBd4a3dDBc9f7D176c22',
+  formattedArgs: undefined,
+  functionName: 'borrowRatePerTimestamp',
+  sender: undefined
+}
+[Moonwell] Failed to fetch rate for WETH: ContractFunctionExecutionError: HTTP request failed.
+
+Status: 429
+URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0xcd91801c","to":"0x628ff693426583D9a7FB391E54366292F509D457"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0x628ff693426583D9a7FB391E54366292F509D457
+  data:  0xcd91801c
+ 
+Contract Call:
+  address:   0x628ff693426583D9a7FB391E54366292F509D457
+  function:  borrowRatePerTimestamp()
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Too Many Requests
+Version: viem@2.47.6
+    at getContractError (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/errors/getContractError.ts:82:10)
+    at readContract (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/actions/public/readContract.ts:138:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MoonwellScanner.getMarketRate (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/protocols/moonwell.ts:59:38)
+    at async MoonwellScanner.syncAllRates (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/protocols/moonwell.ts:81:22)
+    at async syncAllRates (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/scripts/sync_rates.ts:131:7) {
+  cause: CallExecutionError: HTTP request failed.
+  
+  Status: 429
+  URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+  Request body: {"method":"eth_call","params":[{"data":"0xcd91801c","to":"0x628ff693426583D9a7FB391E54366292F509D457"},"latest"]}
+   
+  Raw Call Arguments:
+    to:    0x628ff693426583D9a7FB391E54366292F509D457
+    data:  0xcd91801c
+  
+  Details: Too Many Requests
+  Version: viem@2.47.6
+      at getCallError (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/errors/getCallError.ts:42:10)
+      at call (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/actions/public/call.ts:307:23)
+      at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async readContract (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/actions/public/readContract.ts:122:22)
+      at async MoonwellScanner.getMarketRate (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/protocols/moonwell.ts:59:38)
+      at async MoonwellScanner.syncAllRates (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/protocols/moonwell.ts:81:22)
+      at async syncAllRates (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/scripts/sync_rates.ts:131:7) {
+    cause: HttpRequestError: HTTP request failed.
+    
+    Status: 429
+    URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+    Request body: {"method":"eth_call","params":[{"data":"0xcd91801c","to":"0x628ff693426583D9a7FB391E54366292F509D457"},"latest"]}
+    
+    Details: Too Many Requests
+    Version: viem@2.47.6
+        at Object.request (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/rpc/http.ts:166:17)
+        at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at async fn (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/clients/transports/http.ts:148:19)
+        at async request (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/clients/transports/http.ts:153:39)
+        at async delay.count.count (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/buildRequest.ts:153:22)
+        at async attemptRetry (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/promise/withRetry.ts:44:22) {
+      details: 'Too Many Requests',
+      docsPath: undefined,
+      metaMessages: [Array],
+      shortMessage: 'HTTP request failed.',
+      version: '2.47.6',
+      body: [Object],
+      headers: Headers {
+        date: 'Mon, 13 Apr 2026 20:18:39 GMT',
+        server: 'istio-envoy',
+        'content-length': '0'
+      },
+      status: 429,
+      url: 'https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6'
+    },
+    details: 'Too Many Requests',
+    docsPath: undefined,
+    metaMessages: [
+      'Status: 429',
+      'URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6',
+      'Request body: {"method":"eth_call","params":[{"data":"0xcd91801c","to":"0x628ff693426583D9a7FB391E54366292F509D457"},"latest"]}',
+      ' ',
+      'Raw Call Arguments:',
+      '  to:    0x628ff693426583D9a7FB391E54366292F509D457\n' +
+        '  data:  0xcd91801c'
+    ],
+    shortMessage: 'HTTP request failed.',
+    version: '2.47.6'
+  },
+  details: 'Too Many Requests',
+  docsPath: '/docs/contract/readContract',
+  metaMessages: [
+    'Status: 429',
+    'URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6',
+    'Request body: {"method":"eth_call","params":[{"data":"0xcd91801c","to":"0x628ff693426583D9a7FB391E54366292F509D457"},"latest"]}',
+    ' ',
+    'Raw Call Arguments:',
+    '  to:    0x628ff693426583D9a7FB391E54366292F509D457\n  data:  0xcd91801c',
+    ' ',
+    'Contract Call:',
+    '  address:   0x628ff693426583D9a7FB391E54366292F509D457\n' +
+      '  function:  borrowRatePerTimestamp()'
+  ],
+  shortMessage: 'HTTP request failed.',
+  version: '2.47.6',
+  abi: [
+    {
+      name: 'borrowRatePerTimestamp',
+      type: 'function',
+      stateMutability: 'view',
+      inputs: [],
+      outputs: [Array]
+    }
+  ],
+  args: undefined,
+  contractAddress: '0x628ff693426583D9a7FB391E54366292F509D457',
+  formattedArgs: undefined,
+  functionName: 'borrowRatePerTimestamp',
+  sender: undefined
+}
+[Moonwell] Failed to fetch rate for cbBTC: ContractFunctionExecutionError: HTTP request failed.
+
+Status: 429
+URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0xcd91801c","to":"0xCB575382098675549887E2247164929D1302506b"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0xCB575382098675549887E2247164929D1302506b
+  data:  0xcd91801c
+ 
+Contract Call:
+  address:   0xCB575382098675549887E2247164929D1302506b
+  function:  borrowRatePerTimestamp()
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Too Many Requests
+Version: viem@2.47.6
+    at getContractError (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/errors/getContractError.ts:82:10)
+    at readContract (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/actions/public/readContract.ts:138:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MoonwellScanner.getMarketRate (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/protocols/moonwell.ts:59:38)
+    at async MoonwellScanner.syncAllRates (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/protocols/moonwell.ts:81:22)
+    at async syncAllRates (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/scripts/sync_rates.ts:131:7) {
+  cause: CallExecutionError: HTTP request failed.
+  
+  Status: 429
+  URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+  Request body: {"method":"eth_call","params":[{"data":"0xcd91801c","to":"0xCB575382098675549887E2247164929D1302506b"},"latest"]}
+   
+  Raw Call Arguments:
+    to:    0xCB575382098675549887E2247164929D1302506b
+    data:  0xcd91801c
+  
+  Details: Too Many Requests
+  Version: viem@2.47.6
+      at getCallError (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/errors/getCallError.ts:42:10)
+      at call (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/actions/public/call.ts:307:23)
+      at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async readContract (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/actions/public/readContract.ts:122:22)
+      at async MoonwellScanner.getMarketRate (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/protocols/moonwell.ts:59:38)
+      at async MoonwellScanner.syncAllRates (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/protocols/moonwell.ts:81:22)
+      at async syncAllRates (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/scripts/sync_rates.ts:131:7) {
+    cause: HttpRequestError: HTTP request failed.
+    
+    Status: 429
+    URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+    Request body: {"method":"eth_call","params":[{"data":"0xcd91801c","to":"0xCB575382098675549887E2247164929D1302506b"},"latest"]}
+    
+    Details: Too Many Requests
+    Version: viem@2.47.6
+        at Object.request (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/rpc/http.ts:166:17)
+        at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at async fn (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/clients/transports/http.ts:148:19)
+        at async request (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/clients/transports/http.ts:153:39)
+        at async delay.count.count (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/buildRequest.ts:153:22)
+        at async attemptRetry (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/promise/withRetry.ts:44:22) {
+      details: 'Too Many Requests',
+      docsPath: undefined,
+      metaMessages: [Array],
+      shortMessage: 'HTTP request failed.',
+      version: '2.47.6',
+      body: [Object],
+      headers: Headers {
+        date: 'Mon, 13 Apr 2026 20:18:41 GMT',
+        server: 'istio-envoy',
+        'content-length': '0'
+      },
+      status: 429,
+      url: 'https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6'
+    },
+    details: 'Too Many Requests',
+    docsPath: undefined,
+    metaMessages: [
+      'Status: 429',
+      'URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6',
+      'Request body: {"method":"eth_call","params":[{"data":"0xcd91801c","to":"0xCB575382098675549887E2247164929D1302506b"},"latest"]}',
+      ' ',
+      'Raw Call Arguments:',
+      '  to:    0xCB575382098675549887E2247164929D1302506b\n' +
+        '  data:  0xcd91801c'
+    ],
+    shortMessage: 'HTTP request failed.',
+    version: '2.47.6'
+  },
+  details: 'Too Many Requests',
+  docsPath: '/docs/contract/readContract',
+  metaMessages: [
+    'Status: 429',
+    'URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6',
+    'Request body: {"method":"eth_call","params":[{"data":"0xcd91801c","to":"0xCB575382098675549887E2247164929D1302506b"},"latest"]}',
+    ' ',
+    'Raw Call Arguments:',
+    '  to:    0xCB575382098675549887E2247164929D1302506b\n  data:  0xcd91801c',
+    ' ',
+    'Contract Call:',
+    '  address:   0xCB575382098675549887E2247164929D1302506b\n' +
+      '  function:  borrowRatePerTimestamp()'
+  ],
+  shortMessage: 'HTTP request failed.',
+  version: '2.47.6',
+  abi: [
+    {
+      name: 'borrowRatePerTimestamp',
+      type: 'function',
+      stateMutability: 'view',
+      inputs: [],
+      outputs: [Array]
+    }
+  ],
+  args: undefined,
+  contractAddress: '0xCB575382098675549887E2247164929D1302506b',
+  formattedArgs: undefined,
+  functionName: 'borrowRatePerTimestamp',
+  sender: undefined
+}
+[Moonwell] Failed to fetch rate for USDT: ContractFunctionExecutionError: HTTP request failed.
+
+Status: 429
+URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0xcd91801c","to":"0x3865DfD4d2acb8f0c601b69B8f5951dC55de9A0D"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0x3865DfD4d2acb8f0c601b69B8f5951dC55de9A0D
+  data:  0xcd91801c
+ 
+Contract Call:
+  address:   0x3865DfD4d2acb8f0c601b69B8f5951dC55de9A0D
+  function:  borrowRatePerTimestamp()
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Too Many Requests
+Version: viem@2.47.6
+    at getContractError (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/errors/getContractError.ts:82:10)
+    at readContract (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/actions/public/readContract.ts:138:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MoonwellScanner.getMarketRate (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/protocols/moonwell.ts:59:38)
+    at async MoonwellScanner.syncAllRates (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/protocols/moonwell.ts:81:22)
+    at async syncAllRates (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/scripts/sync_rates.ts:131:7) {
+  cause: CallExecutionError: HTTP request failed.
+  
+  Status: 429
+  URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+  Request body: {"method":"eth_call","params":[{"data":"0xcd91801c","to":"0x3865DfD4d2acb8f0c601b69B8f5951dC55de9A0D"},"latest"]}
+   
+  Raw Call Arguments:
+    to:    0x3865DfD4d2acb8f0c601b69B8f5951dC55de9A0D
+    data:  0xcd91801c
+  
+  Details: Too Many Requests
+  Version: viem@2.47.6
+      at getCallError (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/errors/getCallError.ts:42:10)
+      at call (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/actions/public/call.ts:307:23)
+      at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async readContract (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/actions/public/readContract.ts:122:22)
+      at async MoonwellScanner.getMarketRate (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/protocols/moonwell.ts:59:38)
+      at async MoonwellScanner.syncAllRates (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/protocols/moonwell.ts:81:22)
+      at async syncAllRates (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/scripts/sync_rates.ts:131:7) {
+    cause: HttpRequestError: HTTP request failed.
+    
+    Status: 429
+    URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+    Request body: {"method":"eth_call","params":[{"data":"0xcd91801c","to":"0x3865DfD4d2acb8f0c601b69B8f5951dC55de9A0D"},"latest"]}
+    
+    Details: Too Many Requests
+    Version: viem@2.47.6
+        at Object.request (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/rpc/http.ts:166:17)
+        at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at async fn (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/clients/transports/http.ts:148:19)
+        at async request (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/clients/transports/http.ts:153:39)
+        at async delay.count.count (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/buildRequest.ts:153:22)
+        at async attemptRetry (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/promise/withRetry.ts:44:22) {
+      details: 'Too Many Requests',
+      docsPath: undefined,
+      metaMessages: [Array],
+      shortMessage: 'HTTP request failed.',
+      version: '2.47.6',
+      body: [Object],
+      headers: Headers {
+        date: 'Mon, 13 Apr 2026 20:18:42 GMT',
+        server: 'istio-envoy',
+        'content-length': '0'
+      },
+      status: 429,
+      url: 'https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6'
+    },
+    details: 'Too Many Requests',
+    docsPath: undefined,
+    metaMessages: [
+      'Status: 429',
+      'URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6',
+      'Request body: {"method":"eth_call","params":[{"data":"0xcd91801c","to":"0x3865DfD4d2acb8f0c601b69B8f5951dC55de9A0D"},"latest"]}',
+      ' ',
+      'Raw Call Arguments:',
+      '  to:    0x3865DfD4d2acb8f0c601b69B8f5951dC55de9A0D\n' +
+        '  data:  0xcd91801c'
+    ],
+    shortMessage: 'HTTP request failed.',
+    version: '2.47.6'
+  },
+  details: 'Too Many Requests',
+  docsPath: '/docs/contract/readContract',
+  metaMessages: [
+    'Status: 429',
+    'URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6',
+    'Request body: {"method":"eth_call","params":[{"data":"0xcd91801c","to":"0x3865DfD4d2acb8f0c601b69B8f5951dC55de9A0D"},"latest"]}',
+    ' ',
+    'Raw Call Arguments:',
+    '  to:    0x3865DfD4d2acb8f0c601b69B8f5951dC55de9A0D\n  data:  0xcd91801c',
+    ' ',
+    'Contract Call:',
+    '  address:   0x3865DfD4d2acb8f0c601b69B8f5951dC55de9A0D\n' +
+      '  function:  borrowRatePerTimestamp()'
+  ],
+  shortMessage: 'HTTP request failed.',
+  version: '2.47.6',
+  abi: [
+    {
+      name: 'borrowRatePerTimestamp',
+      type: 'function',
+      stateMutability: 'view',
+      inputs: [],
+      outputs: [Array]
+    }
+  ],
+  args: undefined,
+  contractAddress: '0x3865DfD4d2acb8f0c601b69B8f5951dC55de9A0D',
+  formattedArgs: undefined,
+  functionName: 'borrowRatePerTimestamp',
+  sender: undefined
+}
+[Moonwell] Failed to fetch rate for LBTC: ContractFunctionExecutionError: HTTP request failed.
+
+Status: 429
+URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0xcd91801c","to":"0x10fF57879482D83769c0378E937D573b9fC5d2Ee"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0x10fF57879482D83769c0378E937D573b9fC5d2Ee
+  data:  0xcd91801c
+ 
+Contract Call:
+  address:   0x10fF57879482D83769c0378E937D573b9fC5d2Ee
+  function:  borrowRatePerTimestamp()
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Too Many Requests
+Version: viem@2.47.6
+    at getContractError (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/errors/getContractError.ts:82:10)
+    at readContract (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/actions/public/readContract.ts:138:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async MoonwellScanner.getMarketRate (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/protocols/moonwell.ts:59:38)
+    at async MoonwellScanner.syncAllRates (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/protocols/moonwell.ts:81:22)
+    at async syncAllRates (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/scripts/sync_rates.ts:131:7) {
+  cause: CallExecutionError: HTTP request failed.
+  
+  Status: 429
+  URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+  Request body: {"method":"eth_call","params":[{"data":"0xcd91801c","to":"0x10fF57879482D83769c0378E937D573b9fC5d2Ee"},"latest"]}
+   
+  Raw Call Arguments:
+    to:    0x10fF57879482D83769c0378E937D573b9fC5d2Ee
+    data:  0xcd91801c
+  
+  Details: Too Many Requests
+  Version: viem@2.47.6
+      at getCallError (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/errors/getCallError.ts:42:10)
+      at call (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/actions/public/call.ts:307:23)
+      at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async readContract (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/actions/public/readContract.ts:122:22)
+      at async MoonwellScanner.getMarketRate (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/protocols/moonwell.ts:59:38)
+      at async MoonwellScanner.syncAllRates (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/protocols/moonwell.ts:81:22)
+      at async syncAllRates (/Users/sg/Documents/workspace/svylabs/liquidax-app/src/scripts/sync_rates.ts:131:7) {
+    cause: HttpRequestError: HTTP request failed.
+    
+    Status: 429
+    URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+    Request body: {"method":"eth_call","params":[{"data":"0xcd91801c","to":"0x10fF57879482D83769c0378E937D573b9fC5d2Ee"},"latest"]}
+    
+    Details: Too Many Requests
+    Version: viem@2.47.6
+        at Object.request (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/rpc/http.ts:166:17)
+        at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at async fn (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/clients/transports/http.ts:148:19)
+        at async request (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/clients/transports/http.ts:153:39)
+        at async delay.count.count (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/buildRequest.ts:153:22)
+        at async attemptRetry (/Users/sg/Documents/workspace/svylabs/liquidax-app/node_modules/viem/utils/promise/withRetry.ts:44:22) {
+      details: 'Too Many Requests',
+      docsPath: undefined,
+      metaMessages: [Array],
+      shortMessage: 'HTTP request failed.',
+      version: '2.47.6',
+      body: [Object],
+      headers: Headers {
+        date: 'Mon, 13 Apr 2026 20:18:43 GMT',
+        server: 'istio-envoy',
+        'content-length': '0'
+      },
+      status: 429,
+      url: 'https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6'
+    },
+    details: 'Too Many Requests',
+    docsPath: undefined,
+    metaMessages: [
+      'Status: 429',
+      'URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6',
+      'Request body: {"method":"eth_call","params":[{"data":"0xcd91801c","to":"0x10fF57879482D83769c0378E937D573b9fC5d2Ee"},"latest"]}',
+      ' ',
+      'Raw Call Arguments:',
+      '  to:    0x10fF57879482D83769c0378E937D573b9fC5d2Ee\n' +
+        '  data:  0xcd91801c'
+    ],
+    shortMessage: 'HTTP request failed.',
+    version: '2.47.6'
+  },
+  details: 'Too Many Requests',
+  docsPath: '/docs/contract/readContract',
+  metaMessages: [
+    'Status: 429',
+    'URL: https://base-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6',
+    'Request body: {"method":"eth_call","params":[{"data":"0xcd91801c","to":"0x10fF57879482D83769c0378E937D573b9fC5d2Ee"},"latest"]}',
+    ' ',
+    'Raw Call Arguments:',
+    '  to:    0x10fF57879482D83769c0378E937D573b9fC5d2Ee\n  data:  0xcd91801c',
+    ' ',
+    'Contract Call:',
+    '  address:   0x10fF57879482D83769c0378E937D573b9fC5d2Ee\n' +
+      '  function:  borrowRatePerTimestamp()'
+  ],
+  shortMessage: 'HTTP request failed.',
+  version: '2.47.6',
+  abi: [
+    {
+      name: 'borrowRatePerTimestamp',
+      type: 'function',
+      stateMutability: 'view',
+      inputs: [],
+      outputs: [Array]
+    }
+  ],
+  args: undefined,
+  contractAddress: '0x10fF57879482D83769c0378E937D573b9fC5d2Ee',
+  formattedArgs: undefined,
+  functionName: 'borrowRatePerTimestamp',
+  sender: undefined
+}
+
+Checking protocol: Aave V3 (Arbitrum)
+Syncing all Aave V3 rates on Arbitrum...
+[Aave V3 (Arbitrum)] Failed to get reserves list: HTTP request failed.
+
+Status: 429
+URL: https://arb-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0xd1946dbc","to":"0x794a61358D6845594F94dc1DB02A252b5b4814aD"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0x794a61358D6845594F94dc1DB02A252b5b4814aD
+  data:  0xd1946dbc
+ 
+Contract Call:
+  address:   0x794a61358D6845594F94dc1DB02A252b5b4814aD
+  function:  getReservesList()
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Too Many Requests
+Version: viem@2.47.6
+[Aave V3 (Arbitrum)] Failed both Aave rate methods for 0xaf88d065e77c8cC2239327C5EDb3A432268e5831 on Arbitrum: HTTP request failed.
+
+URL: https://arb-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0x35ea6a75000000000000000000000000af88d065e77c8cc2239327c5edb3a432268e5831","to":"0x794a61358D6845594F94dc1DB02A252b5b4814aD"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0x794a61358D6845594F94dc1DB02A252b5b4814aD
+  data:  0x35ea6a75000000000000000000000000af88d065e77c8cc2239327c5edb3a432268e5831
+ 
+Contract Call:
+  address:   0x794a61358D6845594F94dc1DB02A252b5b4814aD
+  function:  getReserveData(address asset)
+  args:                    (0xaf88d065e77c8cC2239327C5EDb3A432268e5831)
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Unexpected token 'A', "ARB_MAINNE"... is not valid JSON
+Version: viem@2.47.6
+[Aave V3 (Arbitrum)] Failed both Aave rate methods for 0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9 on Arbitrum: HTTP request failed.
+
+URL: https://arb-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0x35ea6a75000000000000000000000000fd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9","to":"0x794a61358D6845594F94dc1DB02A252b5b4814aD"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0x794a61358D6845594F94dc1DB02A252b5b4814aD
+  data:  0x35ea6a75000000000000000000000000fd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9
+ 
+Contract Call:
+  address:   0x794a61358D6845594F94dc1DB02A252b5b4814aD
+  function:  getReserveData(address asset)
+  args:                    (0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9)
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Unexpected token 'A', "ARB_MAINNE"... is not valid JSON
+Version: viem@2.47.6
+[Aave V3 (Arbitrum)] Failed both Aave rate methods for 0xaf88d065e77c8cC2239327C5EDb3A432268e5831 on Arbitrum: HTTP request failed.
+
+URL: https://arb-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6
+Request body: {"method":"eth_call","params":[{"data":"0x35ea6a75000000000000000000000000af88d065e77c8cc2239327c5edb3a432268e5831","to":"0x794a61358D6845594F94dc1DB02A252b5b4814aD"},"latest"]}
+ 
+Raw Call Arguments:
+  to:    0x794a61358D6845594F94dc1DB02A252b5b4814aD
+  data:  0x35ea6a75000000000000000000000000af88d065e77c8cc2239327c5edb3a432268e5831
+ 
+Contract Call:
+  address:   0x794a61358D6845594F94dc1DB02A252b5b4814aD
+  function:  getReserveData(address asset)
+  args:                    (0xaf88d065e77c8cC2239327C5EDb3A432268e5831)
+
+Docs: https://viem.sh/docs/contract/readContract
+Details: Unexpected token 'A', "ARB_MAINNE"... is not valid JSON
+Version: viem@2.47.6
+
+Checking protocol: Morpho Blue (Arbitrum)
+Discovering all popular Morpho Blue markets on Arbitrum...
+
+Checking protocol: Kamino (Solana)
+[Kamino (Solana)] Fetching Kamino rates...
+[Kamino] Failed: Request failed with status code 404
+[Solend] Fetching Solend rates...
+[Solend] Failed: Request failed with status code 404
+
+--- Syncing Citrea Ecosystem (Zentra Finance) ---
+[SUCCESS] Zentra (Citrea) WcBTC/ctUSD: 2.22%
+[SUCCESS] Zentra (Citrea) WcBTC/WcBTC: 0.58%
+
+--- Sync Finished ---
+Success: 7
+Failed: 0

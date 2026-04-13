@@ -44,6 +44,45 @@ function App() {
   const debtTokens = ['All', 'DAI', 'USDC', 'USDT', 'GHO', 'LUSD', 'USDS', 'BOLD', 'ctUSD'];
   const collateralAssets = ['All', 'WETH', 'WBTC', 'cbBTC', 'wstETH', 'weETH', 'LBTC', 'cBTC', 'WcBTC'];
 
+  const tabToSlug: Record<string, string> = {
+    'DeFi Rates': 'defi',
+    'CeFi Rates': 'cefi',
+    'Bitcoin': 'bitcoin',
+    'RWAs': 'rwas'
+  };
+
+  const slugToTab: Record<string, string> = {
+    'defi': 'DeFi Rates',
+    'cefi': 'CeFi Rates',
+    'bitcoin': 'Bitcoin',
+    'rwas': 'RWAs',
+    'rwa': 'RWAs'
+  };
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      const tab = slugToTab[hash];
+      if (tab) {
+        setActiveTab(tab);
+      }
+    };
+
+    handleHashChange();
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  useEffect(() => {
+    const slug = tabToSlug[activeTab];
+    if (slug) {
+      const currentHash = window.location.hash.replace('#', '');
+      if (currentHash !== slug) {
+        window.history.replaceState(null, '', `#${slug}`);
+      }
+    }
+  }, [activeTab]);
+
   useEffect(() => {
     fetchData();
   }, [protocol, debtToken, chain, collateralAsset]);
@@ -324,6 +363,7 @@ function App() {
                       <a href="https://coinmarketcap.com/currencies/ondo-usdy/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-primary)', textDecoration: 'none' }}>Ondo USDY</a>
                     </td>
                     <td>fUSDC</td>
+                    <td style={{ color: 'var(--text-primary)', fontWeight: 700 }}>~5.85%</td>
                     <td>85%</td>
                     <td>92%</td>
                     <td><span className="badge" style={{ background: 'rgba(52, 211, 153, 0.1)', color: '#34d399', border: '1px solid #34d399', fontSize: '10px' }}>Permissionless</span></td>

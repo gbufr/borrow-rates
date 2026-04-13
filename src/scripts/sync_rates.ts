@@ -29,6 +29,42 @@ const ASSETS = {
   ctBTC: { symbol: 'WcBTC', address: getAddress('0x0000000000000000000000000000000000000000') }, // Placeholder for Citrea
 };
 
+function getAssetAddress(symbol: string, chain: string): `0x${string}` | null {
+  const mapping: Record<string, Record<string, string>> = {
+    'Ethereum': {
+      WETH: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+      WBTC: '0x2260FAC5E5542a773Aa44fBCfedF7C193bc2C599',
+      cbBTC: '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf',
+      USDC: '0xA0b86991c6218b36c1d19D4a2e9eb0cE3606eb48',
+      USDT: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+      DAI: '0x6B175474E89094C44Da98B954EedeAC495271d0F',
+      USDS: '0xdC035D45d973E3EC169d2276DDab16f1e407384F',
+      wstETH: '0x7f39C581F595B53c5cb19bD0b3f8DA6c935E2Ca0',
+      weETH: '0xCd5fE23C85820F7B72D0926FC9b05b43E359b7ee',
+      LUSD: '0x5f98805A4e8be255a32880FDeC7F6728C6568bA0',
+    },
+    'Base': {
+      WETH: '0x4200000000000000000000000000000000000006',
+      cbBTC: '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf',
+      USDC: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+      USDS: '0x8ce0E41852445E16f73449339e0ed887cbe8E8F5',
+      wstETH: '0x5981503679241b9d799c4F7830897db7C26AA438',
+      LBTC: '0x8236a87084f851da573c773a908092241612788e',
+    },
+    'Arbitrum': {
+      WETH: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
+      WBTC: '0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f',
+      USDC: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
+      USDT: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9',
+      wstETH: '0x5979D7b546E38E414F7E9822514be443A4800529',
+    }
+  };
+
+  const chainMap = mapping[chain] || mapping['Ethereum'];
+  const addr = chainMap[symbol];
+  return addr ? getAddress(addr) : null;
+}
+
 const PAIRS = [
   // WETH Collateral
   { coll: ASSETS.WETH, debt: ASSETS.USDC },
@@ -122,8 +158,12 @@ async function syncAllRates() {
           continue; // Handled by syncAllRates
         }
 
-        const collateralAddress = scanner.chain === 'Base' && pair.coll.symbol === 'USDC' ? getAddress('0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913') : pair.coll.address;
-        const debtAddress = scanner.chain === 'Base' && pair.debt.symbol === 'USDC' ? getAddress('0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913') : pair.debt.address;
+
+        const chainName = (scanner as any).chain || 'Ethereum';
+        const collateralAddress = getAssetAddress(pair.coll.symbol, chainName);
+        const debtAddress = getAssetAddress(pair.debt.symbol, chainName);
+
+        if (!collateralAddress || !debtAddress) continue;
 
         const rate = await scanner.getMarketRate(collateralAddress, debtAddress, marketId);
         
@@ -146,6 +186,42 @@ async function syncAllRates() {
             liqThreshold = 1 / 1.10;
             ltv = liqThreshold * 0.9; // Recommend 10% safety buffer for Liquity (more efficient)
             liqPenalty = 0.10; // 10% Liquity bonus
+          }
+
+          if (protocolName.includes('Aave')) {
+            // Fetch LTV/LT from config if possible
+            try {
+              const client = (scanner as any).getClient();
+              const config = await client.readContract({
+                address: (scanner as any).dataProviderAddress,
+                abi: [{
+                  "inputs": [{ "name": "asset", "type": "address" }],
+                  "name": "getReserveConfigurationData",
+                  "outputs": [
+                    { "name": "ltv", "type": "uint256" },
+                    { "name": "liquidationThreshold", "type": "uint256" },
+                    { "name": "liquidationBonus", "type": "uint256" },
+                    { "name": "decimals", "type": "uint256" },
+                    { "name": "reserveFactor", "type": "uint256" },
+                    { "name": "usageAsCollateralEnabled", "type": "bool" },
+                    { "name": "borrowingEnabled", "type": "bool" },
+                    { "name": "stableBorrowRateEnabled", "type": "bool" },
+                    { "name": "isActive", "type": "bool" },
+                    { "name": "isFrozen", "type": "bool" }
+                  ],
+                  "stateMutability": "view",
+                  "type": "function"
+                }],
+                functionName: 'getReserveConfigurationData',
+                args: [collateralAddress],
+              }) as any;
+
+              ltv = Number(config.ltv ?? 0) / 10000;
+              liqThreshold = Number(config.liquidationThreshold ?? 0) / 10000;
+              liqPenalty = (Number(config.liquidationBonus ?? 10000) - 10000) / 10000;
+            } catch (e) {
+              // Fallback to defaults or skip
+            }
           }
 
           await db.upsertRate({
