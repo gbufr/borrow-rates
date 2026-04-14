@@ -13,7 +13,8 @@ const ALLOWED_ORIGINS = [
   'http://localhost:5175',
   'http://localhost:3000',
   'https://borrowdesk.org',
-  'http://borrowdesk.org'
+  'http://borrowdesk.org',
+  'https://gbufr.github.io'
 ];
 
 app.use(cors({
