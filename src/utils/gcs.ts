@@ -25,6 +25,18 @@ export class GCSStorage {
     }
   }
 
+  static async getUpdatedTime(): Promise<number | null> {
+    try {
+      const [metadata] = await storage.bucket(bucketName).file('loan_scanner.db').getMetadata();
+      return metadata.updated ? new Date(metadata.updated).getTime() : null;
+    } catch (e: any) {
+      if (e.code !== 404) {
+        console.error(`[GCS] Failed to get metadata:`, e);
+      }
+      return null;
+    }
+  }
+
   static async restore() {
     console.log(`[GCS] Attempting to restore database from gs://${bucketName}/...`);
     try {

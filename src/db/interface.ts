@@ -51,11 +51,17 @@ export interface MarketRate {
   rateType: 'fixed' | 'floating';
 }
 
+export interface SyncMetadata {
+  key: string;
+  value: string;
+}
+
 export interface DatabaseSchema {
   positions: LoanPosition;
   block_cursors: BlockCursor;
   prices: AssetPrice;
   rates: MarketRate;
+  sync_metadata: SyncMetadata;
 }
 
 export interface ILoanRepository {
@@ -70,5 +76,7 @@ export interface ILoanRepository {
   getAllRates(): Promise<MarketRate[]>;
   getOldestRates(limit: number): Promise<MarketRate[]>;
   deleteRatesForProtocol(protocol: string): Promise<void>;
+  getMetadata(key: string): Promise<string | null>;
+  setMetadata(key: string, value: string): Promise<void>;
   close(): Promise<void>;
 }

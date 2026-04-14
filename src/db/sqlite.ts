@@ -85,6 +85,13 @@ export class SQLiteAdapter implements ILoanRepository {
       .addPrimaryKeyConstraint('rates_pk', ['protocol', 'assetPair'])
       .execute();
 
+    await this.db.schema
+      .createTable('sync_metadata')
+      .ifNotExists()
+      .addColumn('key', 'text', (cb) => cb.primaryKey())
+      .addColumn('value', 'text')
+      .execute();
+
     // Migration for existing tables: add new columns if missing
     try {
       await this.db.schema
@@ -180,6 +187,23 @@ export class SQLiteAdapter implements ILoanRepository {
 
   async deleteRatesForProtocol(protocol: string): Promise<void> {
     await this.db.deleteFrom('rates').where('protocol', '=', protocol).execute();
+  }
+
+  async getMetadata(key: string): Promise<string | null> {
+    const res = await this.db
+      .selectFrom('sync_metadata')
+      .select('value')
+      .where('key', '=', key)
+      .executeTakeFirst();
+    return res?.value ?? null;
+  }
+
+  async setMetadata(key: string, value: string): Promise<void> {
+    await this.db
+      .insertInto('sync_metadata')
+      .values({ key, value })
+      .onConflict((oc) => oc.column('key').doUpdateSet({ value }))
+      .execute();
   }
 
   async close(): Promise<void> {

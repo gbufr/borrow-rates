@@ -89,11 +89,34 @@ const PAIRS = [
 async function syncAllRates(passedDb?: ILoanRepository) {
   console.log('--- Starting Comprehensive Interest Rate Sync ---');
   
-  if (!passedDb && process.env.NODE_ENV === 'production') {
-    await GCSStorage.restore();
-  }
-
   const db = passedDb || await getDatabaseAdapter();
+
+  if (process.env.NODE_ENV === 'production') {
+    console.log('[SYNC] Checking GCS for updates...');
+    const gcsUpdatedTime = await GCSStorage.getUpdatedTime();
+    const lastGcsSync = await db.getMetadata('last_gcs_sync_time');
+    const localLastSync = lastGcsSync ? parseInt(lastGcsSync) : 0;
+
+    if (gcsUpdatedTime && gcsUpdatedTime > localLastSync) {
+      console.log(`[SYNC] GCS file is newer (${new Date(gcsUpdatedTime).toISOString()} > ${new Date(localLastSync).toISOString()}). Downloading...`);
+      // Close current DB connection before overwriting file
+      if (!passedDb) await db.close();
+      
+      const success = await GCSStorage.restore();
+      if (success) {
+        // Re-open DB and update metadata
+        const newDb = passedDb || await getDatabaseAdapter();
+        await newDb.setMetadata('last_gcs_sync_time', gcsUpdatedTime.toString());
+        console.log('[SYNC] Database updated from GCS. Skipping RPC sync as file was just updated.');
+        if (!passedDb) await newDb.close();
+        return;
+      } else {
+        console.warn('[SYNC] Failed to download from GCS, proceeding with RPC sync.');
+      }
+    } else {
+      console.log('[SYNC] GCS file is up to date or older. Proceeding with RPC sync.');
+    }
+  }
   
   const scanners: ProtocolScanner[] = [
     // Ethereum Mainnet
