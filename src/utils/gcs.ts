@@ -44,7 +44,18 @@ export class GCSStorage {
       return true;
     } catch (e: any) {
       if (e.code === 404) {
-        console.warn(`[GCS] No existing backup found in GCS. Starting with fresh DB.`);
+        console.warn(`[GCS] No existing backup found in GCS. Checking for seed database...`);
+        // Fallback: If bundled database exists, use it as a seed
+        const seedPath = 'data/loan_scanner.db';
+        if (fs.existsSync(seedPath) && !fs.existsSync(dbPath)) {
+          console.log(`[GCS] Seeding from bundled database: ${seedPath} -> ${dbPath}`);
+          try {
+            fs.copyFileSync(seedPath, dbPath);
+            return true;
+          } catch (err) {
+            console.error(`[GCS] Failed to seed from bundle:`, err);
+          }
+        }
       } else {
         console.error(`[GCS] Restore failed:`, e);
       }

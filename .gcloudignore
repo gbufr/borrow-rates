@@ -3,9 +3,7 @@
 .gitignore
 node_modules/
 frontend/
-data/
-*.db
-*.sqlite
+# data/             <-- Commented out to allow seeding from bundle
 *.log
 *.txt
 .env
