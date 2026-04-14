@@ -9,6 +9,22 @@ import './index.css';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
 
+declare global {
+  interface Window {
+    gtag: (...args: any[]) => void;
+  }
+}
+
+const trackEvent = (action: string, category: string, label?: string, value?: number) => {
+  if (typeof window.gtag === 'function') {
+    window.gtag('event', action, {
+      event_category: category,
+      event_label: label,
+      value: value
+    });
+  }
+};
+
 interface MarketRate {
   protocol: string;
   assetPair: string;
@@ -33,6 +49,11 @@ function App() {
   const [debtToken, setDebtToken] = useState<string>('All');
   const [collateralAsset, setCollateralAsset] = useState<string>('All');
   const [chain, setChain] = useState('All');
+
+  const updateFilter = (type: string, value: string, setter: (v: string) => void) => {
+    setter(value);
+    trackEvent('filter_change', 'Filters', `${type}: ${value}`);
+  };
   const [rates, setRates] = useState<MarketRate[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -107,6 +128,16 @@ function App() {
     };
     const title = titles[activeTab] || 'Live Borrow Rates';
     document.title = `${title} | borrowdesk.org`;
+    trackEvent('view_tab', 'Navigation', activeTab);
+  }, [activeTab]);
+
+  // Track time spent on tab
+  useEffect(() => {
+    const startTime = Date.now();
+    return () => {
+      const duration = Math.round((Date.now() - startTime) / 1000);
+      trackEvent('time_on_tab', 'Engagement', activeTab, duration);
+    };
   }, [activeTab]);
 
   useEffect(() => {
@@ -499,7 +530,7 @@ function App() {
                             Chain <ChevronDown size={12} style={{ opacity: chain !== 'All' ? 1 : 0.5, color: chain !== 'All' ? 'var(--accent-primary)' : 'inherit' }} />
                           </div>
                           {activeFilter === 'chain' && (
-                            <FilterDropdown title="Chain" options={chains} current={chain} onSelect={setChain} onClose={() => setActiveFilter(null)} />
+                            <FilterDropdown title="Chain" options={chains} current={chain} onSelect={(v) => updateFilter('chain', v, setChain)} onClose={() => setActiveFilter(null)} />
                           )}
                         </th>
                         <th style={{ position: 'relative', cursor: 'pointer' }} onClick={() => setActiveFilter(activeFilter === 'protocol' ? null : 'protocol')}>
@@ -507,7 +538,7 @@ function App() {
                             Protocol <ChevronDown size={12} style={{ opacity: protocol !== 'All' ? 1 : 0.5, color: protocol !== 'All' ? 'var(--accent-primary)' : 'inherit' }} />
                           </div>
                           {activeFilter === 'protocol' && (
-                            <FilterDropdown title="Protocol" options={protocols} current={protocol} onSelect={setProtocol} onClose={() => setActiveFilter(null)} />
+                            <FilterDropdown title="Protocol" options={protocols} current={protocol} onSelect={(v) => updateFilter('protocol', v, setProtocol)} onClose={() => setActiveFilter(null)} />
                           )}
                         </th>
                         <th style={{ position: 'relative', cursor: 'pointer' }} onClick={() => setActiveFilter(activeFilter === 'collateral' ? null : 'collateral')}>
@@ -515,7 +546,7 @@ function App() {
                             Collateral <ChevronDown size={12} style={{ opacity: collateralAsset !== 'All' ? 1 : 0.5, color: collateralAsset !== 'All' ? 'var(--accent-primary)' : 'inherit' }} />
                           </div>
                           {activeFilter === 'collateral' && (
-                            <FilterDropdown title="Collateral" options={collateralAssets} current={collateralAsset} onSelect={setCollateralAsset} onClose={() => setActiveFilter(null)} />
+                            <FilterDropdown title="Collateral" options={collateralAssets} current={collateralAsset} onSelect={(v) => updateFilter('collateral', v, setCollateralAsset)} onClose={() => setActiveFilter(null)} />
                           )}
                         </th>
                         <th style={{ position: 'relative', cursor: 'pointer' }} onClick={() => setActiveFilter(activeFilter === 'debt' ? null : 'debt')}>
@@ -523,7 +554,7 @@ function App() {
                             Debt <ChevronDown size={12} style={{ opacity: debtToken !== 'All' ? 1 : 0.5, color: debtToken !== 'All' ? 'var(--accent-primary)' : 'inherit' }} />
                           </div>
                           {activeFilter === 'debt' && (
-                            <FilterDropdown title="Debt Token" options={debtTokens} current={debtToken} onSelect={setDebtToken} onClose={() => setActiveFilter(null)} />
+                            <FilterDropdown title="Debt Token" options={debtTokens} current={debtToken} onSelect={(v) => updateFilter('debt', v, setDebtToken)} onClose={() => setActiveFilter(null)} />
                           )}
                         </th>
                         <th>Borrow rate</th>
@@ -534,7 +565,7 @@ function App() {
                             Rate Type <ChevronDown size={12} style={{ opacity: rateTypeFilter !== 'All' ? 1 : 0.5, color: rateTypeFilter !== 'All' ? 'var(--accent-primary)' : 'inherit' }} />
                           </div>
                           {activeFilter === 'rateType' && (
-                            <FilterDropdown title="Rate Type" options={['All', 'fixed', 'floating']} current={rateTypeFilter} onSelect={(v) => setRateTypeFilter(v as any)} onClose={() => setActiveFilter(null)} />
+                            <FilterDropdown title="Rate Type" options={['All', 'fixed', 'floating']} current={rateTypeFilter} onSelect={(v) => updateFilter('rateType', v, (val) => setRateTypeFilter(val as any))} onClose={() => setActiveFilter(null)} />
                           )}
                         </th>
                         <th>Updated</th>
