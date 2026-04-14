@@ -196,6 +196,16 @@ export class PostgresAdapter implements ILoanRepository {
     await this.db.deleteFrom('rates').where('protocol', '=', protocol).execute();
   }
 
+  async getLatestRateTimestamp(): Promise<number> {
+    const res = await this.db
+      .selectFrom('rates')
+      .select(({ fn }) => [
+        fn.max('lastUpdateTimestamp').as('latest')
+      ])
+      .executeTakeFirst();
+    return Number(res?.latest ?? 0);
+  }
+
   async getMetadata(key: string): Promise<string | null> {
     const res = await this.db
       .selectFrom('sync_metadata')

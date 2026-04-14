@@ -3,7 +3,8 @@ import path from 'path';
 import fs from 'fs';
 const storage = new Storage();
 const bucketName = process.env.GCS_BUCKET_NAME || 'liquidax-db-backups';
-const dbPath = process.env.SQLITE_DB_PATH || 'data/loan_scanner.db';
+const defaultDbPath = process.env.NODE_ENV === 'production' ? '/tmp/loan_scanner.db' : 'data/loan_scanner.db';
+const dbPath = process.env.SQLITE_DB_PATH || defaultDbPath;
 export class GCSStorage {
     static async backup() {
         if (!fs.existsSync(dbPath)) {
@@ -19,6 +20,18 @@ export class GCSStorage {
         }
         catch (e) {
             console.error(`[GCS] Backup failed:`, e);
+        }
+    }
+    static async getUpdatedTime() {
+        try {
+            const [metadata] = await storage.bucket(bucketName).file('loan_scanner.db').getMetadata();
+            return metadata.updated ? new Date(metadata.updated).getTime() : null;
+        }
+        catch (e) {
+            if (e.code !== 404) {
+                console.error(`[GCS] Failed to get metadata:`, e);
+            }
+            return null;
         }
     }
     static async restore() {
@@ -41,7 +54,19 @@ export class GCSStorage {
         }
         catch (e) {
             if (e.code === 404) {
-                console.warn(`[GCS] No existing backup found in GCS. Starting with fresh DB.`);
+                console.warn(`[GCS] No existing backup found in GCS. Checking for seed database...`);
+                // Fallback: If bundled database exists, use it as a seed
+                const seedPath = 'data/loan_scanner.db';
+                if (fs.existsSync(seedPath) && !fs.existsSync(dbPath)) {
+                    console.log(`[GCS] Seeding from bundled database: ${seedPath} -> ${dbPath}`);
+                    try {
+                        fs.copyFileSync(seedPath, dbPath);
+                        return true;
+                    }
+                    catch (err) {
+                        console.error(`[GCS] Failed to seed from bundle:`, err);
+                    }
+                }
             }
             else {
                 console.error(`[GCS] Restore failed:`, e);

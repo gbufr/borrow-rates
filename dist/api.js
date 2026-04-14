@@ -113,6 +113,9 @@ async function start() {
         console.log('[API] Starting background interest rate sync...');
         try {
             await syncAllRates(db);
+            if (process.env.NODE_ENV === 'production') {
+                await GCSStorage.backup();
+            }
             console.log('[API] Background interest rate sync completed.');
         }
         catch (e) {

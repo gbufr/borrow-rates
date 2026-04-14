@@ -11,7 +11,8 @@ export async function getDatabaseAdapter() {
     }
     else {
         // Default to SQLite
-        const adapter = new SQLiteAdapter(process.env.SQLITE_DB_PATH || 'data/loan_scanner.db');
+        const defaultPath = process.env.NODE_ENV === 'production' ? '/tmp/loan_scanner.db' : 'data/loan_scanner.db';
+        const adapter = new SQLiteAdapter(process.env.SQLITE_DB_PATH || defaultPath);
         await adapter.init();
         return adapter;
     }

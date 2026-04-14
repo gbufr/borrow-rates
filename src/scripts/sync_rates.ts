@@ -96,6 +96,10 @@ async function syncAllRates(passedDb?: ILoanRepository) {
     const gcsUpdatedTime = await GCSStorage.getUpdatedTime();
     const lastGcsSync = await db.getMetadata('last_gcs_sync_time');
     const localLastSync = lastGcsSync ? parseInt(lastGcsSync) : 0;
+    
+    // Use UTC for all time calculations
+    const nowUtc = Math.floor(Date.now() / 1000);
+    const STALE_THRESHOLD_SECONDS = 30 * 60; // 30 minutes
 
     if (gcsUpdatedTime && gcsUpdatedTime > localLastSync) {
       console.log(`[SYNC] GCS file is newer (${new Date(gcsUpdatedTime).toISOString()} > ${new Date(localLastSync).toISOString()}). Downloading...`);
@@ -107,9 +111,20 @@ async function syncAllRates(passedDb?: ILoanRepository) {
         // Re-open DB and update metadata
         const newDb = passedDb || await getDatabaseAdapter();
         await newDb.setMetadata('last_gcs_sync_time', gcsUpdatedTime.toString());
-        console.log('[SYNC] Database updated from GCS. Skipping RPC sync as file was just updated.');
-        if (!passedDb) await newDb.close();
-        return;
+        
+        // Internal Staleness Check: Even if GCS file is newer metadata-wise, 
+        // the rates inside might be stale.
+        const latestRateTime = await newDb.getLatestRateTimestamp();
+        const isStale = (nowUtc - latestRateTime) > STALE_THRESHOLD_SECONDS;
+
+        if (!isStale) {
+          console.log(`[SYNC] Database updated from GCS and data is fresh (latest rate from ${new Date(latestRateTime * 1000).toISOString()}). Skipping RPC sync.`);
+          if (!passedDb) await newDb.close();
+          return;
+        } else {
+          console.log(`[SYNC] Database updated from GCS but data is stale (latest rate from ${new Date(latestRateTime * 1000).toISOString()}). Proceeding with RPC sync.`);
+          // Continue to RPC sync using the newly restored DB
+        }
       } else {
         console.warn('[SYNC] Failed to download from GCS, proceeding with RPC sync.');
       }

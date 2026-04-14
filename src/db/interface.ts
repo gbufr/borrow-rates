@@ -76,6 +76,7 @@ export interface ILoanRepository {
   getAllRates(): Promise<MarketRate[]>;
   getOldestRates(limit: number): Promise<MarketRate[]>;
   deleteRatesForProtocol(protocol: string): Promise<void>;
+  getLatestRateTimestamp(): Promise<number>;
   getMetadata(key: string): Promise<string | null>;
   setMetadata(key: string, value: string): Promise<void>;
   close(): Promise<void>;
