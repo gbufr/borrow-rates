@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { 
   Search,
   ChevronDown,
-  X
+  X,
+  Menu
 } from 'lucide-react';
 import './index.css';
 
@@ -37,6 +38,7 @@ function App() {
   const [search, setSearch] = useState('');
   const [rateTypeFilter, setRateTypeFilter] = useState<'All' | 'fixed' | 'floating'>('All');
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const chains = ['All', 'Ethereum', 'Base', 'Arbitrum', 'Solana', 'Citrea'];
   const protocols = ['All', 'Morpho Blue', 'Aave V3', 'Maker MCD', 'Sky', 'Liquity V1', 'Liquity V2', 'Moonwell', 'Kamino', 'Solend', 'Zentra (Citrea)'];
@@ -232,6 +234,12 @@ function App() {
   return (
     <div className="dashboard">
       <header className="header">
+        <button 
+          className="mobile-menu-toggle"
+          onClick={() => setIsMenuOpen(true)}
+        >
+          <Menu size={24} />
+        </button>
         <img src="/logo.png" alt="Logo" className="brand-logo" />
         <div className="title-group">
           <h1>borrow-rates.org</h1>
@@ -239,31 +247,42 @@ function App() {
         </div>
       </header>
 
-      <nav className="tab-nav" style={{ display: 'flex', gap: '1.5rem', marginBottom: '1.5rem', borderBottom: '1px solid var(--glass-border)', padding: '0 0.5rem', flexWrap: 'wrap' }}>
+      <nav className="tab-nav">
         {['DeFi Rates', 'CeFi Rates', 'Bitcoin', 'RWAs', 'Protocols'].map(t => (
           <button
             key={t}
+            className={`nav-btn ${activeTab === t ? 'active' : ''}`}
             onClick={() => setActiveTab(t)}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: activeTab === t ? 'var(--accent-primary)' : 'var(--text-secondary)',
-              fontSize: '1rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-              padding: '0.75rem 0',
-              borderBottom: activeTab === t ? '2px solid var(--accent-primary)' : '2px solid transparent',
-              transition: 'all 0.2s',
-              marginBottom: '-1px',
-              whiteSpace: 'nowrap'
-            }}
           >
             {t}
           </button>
         ))}
-        
-
       </nav>
+
+      <div className={`mobile-sidebar-overlay ${isMenuOpen ? 'open' : ''}`} onClick={() => setIsMenuOpen(false)}>
+        <aside className={`mobile-sidebar ${isMenuOpen ? 'open' : ''}`} onClick={e => e.stopPropagation()}>
+          <div className="sidebar-header">
+            <span className="sidebar-title">Menu</span>
+            <button className="close-btn" onClick={() => setIsMenuOpen(false)}>
+              <X size={24} />
+            </button>
+          </div>
+          <nav className="sidebar-nav">
+            {['DeFi Rates', 'CeFi Rates', 'Bitcoin', 'RWAs', 'Protocols'].map(t => (
+              <button
+                key={t}
+                className={`sidebar-btn ${activeTab === t ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveTab(t);
+                  setIsMenuOpen(false);
+                }}
+              >
+                {t}
+              </button>
+            ))}
+          </nav>
+        </aside>
+      </div>
 
 
 
@@ -480,7 +499,6 @@ function App() {
                         <th>Borrow rate</th>
                         <th>LTV</th>
                         <th>Liq. Threshold</th>
-                        <th>Liq. Penalty</th>
                         <th style={{ position: 'relative', cursor: 'pointer' }} onClick={() => setActiveFilter(activeFilter === 'rateType' ? null : 'rateType')}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                             Rate Type <ChevronDown size={12} style={{ opacity: rateTypeFilter !== 'All' ? 1 : 0.5, color: rateTypeFilter !== 'All' ? 'var(--accent-primary)' : 'inherit' }} />
@@ -569,9 +587,6 @@ function App() {
                           <td data-label="Liq. Threshold" style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>
                             {r.liquidationThreshold ? (r.liquidationThreshold * 100).toFixed(1) + '%' : '—'}
                           </td>
-                          <td data-label="Liq. Penalty" style={{ color: '#ef4444', fontWeight: 600 }}>
-                            {r.liquidationPenalty ? (r.liquidationPenalty * 100).toFixed(1) + '%' : '—'}
-                          </td>
                           <td data-label="Rate Type">
                             <span style={{ 
                               fontSize: '11px', 
@@ -591,7 +606,7 @@ function App() {
                       ))}
                       {rates.length === 0 && (
                         <tr>
-                          <td colSpan={8} style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)' }}>
+                          <td colSpan={7} style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)' }}>
                             No rates data found. Run a scan to populate.
                           </td>
                         </tr>
@@ -655,126 +670,207 @@ function App() {
       {activeTab === 'Protocols' && (
         <main className="section-content" style={{ animation: 'fadeIn 0.4s ease-out' }}>
           <div className="discovery-header" style={{ marginBottom: '2rem', textAlign: 'center' }}>
-            <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Protocol Discovery</h2>
+            <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Borrowing Protocols</h2>
             <p style={{ color: 'var(--text-secondary)' }}>Detailed insights into the engines powering decentralized finance</p>
           </div>
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', 
-            gap: '1.5rem' 
-          }}>
-            {[
-              {
-                name: 'Morpho',
-                website: 'https://morpho.org',
-                uniqueness: 'Layered Efficiency',
-                highlights: 'Extends Aave/Compound with peer-to-peer matching. Offers isolated risk markets via Morpho Blue.',
-                rateType: 'Floating / Adaptive',
-                chains: ['Ethereum', 'Base', 'Arbitrum']
-              },
-              {
-                name: 'Aave V3',
-                website: 'https://aave.com',
-                uniqueness: 'Global Liquidity Hub',
-                highlights: 'Industry standard for lending. Features E-Mode for high-LTV stablecoin loops and Cross-chain Portals.',
-                rateType: 'Floating',
-                chains: ['Ethereum', 'Base', 'Arbitrum', 'Polygon', 'Avalanche', 'Optimism']
-              },
-              {
-                name: 'Maker / Sky',
-                website: 'https://sky.money',
-                uniqueness: 'Stablecoin Engine',
-                highlights: 'The origin of DAI/USDS. Uses Collateralized Debt Positions (CDPs) with fixed stability fees.',
-                rateType: 'Fixed (Governance Set)',
-                chains: ['Ethereum']
-              },
-              {
-                name: 'Liquity V1',
-                website: 'https://liquity.org',
-                uniqueness: 'Zero-Interest Lending',
-                highlights: 'Fully immutable, governance-free, ETH-only. Offers 0% interest loans with a one-time initiation fee.',
-                rateType: 'Fixed (0%)',
-                chains: ['Ethereum']
-              },
-              {
-                name: 'Liquity V2',
-                website: 'https://liquity.org',
-                uniqueness: 'User-Set Rates',
-                highlights: 'Multi-collateral evolution of Liquity. Introducing BOLD and market-driven individual interest rates.',
-                rateType: 'Dynamic / User-Set',
-                chains: ['Ethereum']
-              },
-              {
-                name: 'Moonwell',
-                website: 'https://moonwell.fi',
-                uniqueness: 'Base L3 Native',
-                highlights: 'Leading lending protocol on Base and Moonbeam. High performance and deep integration with Coinbase ecosystem.',
-                rateType: 'Floating',
-                chains: ['Base', 'Moonbeam', 'Moonriver']
-              },
-              {
-                name: 'Kamino',
-                website: 'https://kamino.finance',
-                uniqueness: 'Solana Unified Layer',
-                highlights: 'Combines lending, automated liquidity management, and leverage into a single Solana interface.',
-                rateType: 'Floating',
-                chains: ['Solana']
-              },
-              {
-                name: 'Zentra',
-                website: 'https://zentra.finance',
-                uniqueness: 'Bitcoin ZK-Native',
-                highlights: 'Native money market for Citrea (Bitcoin L2). Enables trust-minimized BTC borrowing and lending.',
-                rateType: 'Floating',
-                chains: ['Citrea']
-              }
-            ].map(p => (
-              <div key={p.name} className="card protocol-card" style={{ 
-                padding: '1.5rem', 
-                border: '1px solid var(--glass-border)',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '1rem',
-                position: 'relative',
-                overflow: 'hidden'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <div>
-                    <h3 style={{ fontSize: '1.25rem', marginBottom: '0.25rem' }}>{p.name}</h3>
-                    <a href={p.website} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.8rem', color: 'var(--accent-primary)', textDecoration: 'none' }}>
-                      {p.website.replace('https://', '')} ↗
-                    </a>
-                  </div>
-                  <div className="badge" style={{ background: 'rgba(34, 211, 238, 0.1)', color: 'var(--accent-primary)', fontSize: '0.7rem' }}>
-                    {p.uniqueness}
-                  </div>
-                </div>
-                
-                <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                  {p.highlights}
-                </p>
-
-                <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
-                    <span style={{ color: 'var(--text-secondary)' }}>Rate Type:</span>
-                    <span style={{ fontWeight: 600 }}>{p.rateType}</span>
-                  </div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-                    {p.chains.map(c => (
-                      <span key={c} style={{ 
-                        fontSize: '9px', 
-                        padding: '2px 6px', 
-                        background: 'rgba(255,255,255,0.05)', 
-                        borderRadius: '4px',
-                        border: '1px solid rgba(255,255,255,0.1)'
-                      }}>
-                        {c}
+          <div className="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Protocol</th>
+                  <th>Summary</th>
+                  <th>Rate Mechanism</th>
+                  <th>LTV Range</th>
+                  <th>Access Type</th>
+                  <th>Potential Risk Factors</th>
+                  <th>Chains Supported</th>
+                  <th>Website</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  {
+                    name: 'Morpho',
+                    website: 'https://morpho.org',
+                    uniqueness: 'Layered Efficiency',
+                    highlights: 'Peer-to-peer matching on top of Aave/Compound. Morpho Blue enables trustless, isolated risk markets.',
+                    rateType: 'Floating / Adaptive',
+                    ltvRange: 'Up to 96.5%',
+                    access: 'Permissionless',
+                    risks: 'Isolated pool liquidity, complex vault parameters',
+                    chains: ['Ethereum', 'Base', 'Arbitrum']
+                  },
+                  {
+                    name: 'Aave V3',
+                    website: 'https://aave.com',
+                    uniqueness: 'Global Liquidity Hub',
+                    highlights: 'Industry standard for lending. Features E-Mode for high-LTV stablecoin loops and Portals.',
+                    rateType: 'Floating',
+                    ltvRange: 'Up to 93%',
+                    access: 'Permissionless',
+                    risks: 'Governance overhead, E-Mode collateral aggregation',
+                    chains: ['Ethereum', 'Base', 'Layer 2s']
+                  },
+                  {
+                    name: 'Maker / Sky',
+                    website: 'https://sky.money',
+                    uniqueness: 'Stablecoin Engine',
+                    highlights: 'The origin of DAI/USDS. Uses Collateralized Debt Positions (CDPs) with fixed stability fees.',
+                    rateType: 'Fixed (Gov Set)',
+                    ltvRange: '0% - 85%',
+                    access: 'Permissionless',
+                    risks: 'PSM liquidity reliance, centralized governance',
+                    chains: ['Ethereum']
+                  },
+                  {
+                    name: 'Liquity V1',
+                    website: 'https://liquity.org',
+                    uniqueness: 'Zero-Interest Lending',
+                    highlights: 'Immutable, ETH-only. Offers 0% interest loans with a one-time initiation fee.',
+                    rateType: 'Fixed (0%)',
+                    ltvRange: 'Up to 90.9%',
+                    access: 'Permissionless',
+                    risks: 'Collateral concentration (ETH only), Recovery Mode',
+                    chains: ['Ethereum']
+                  },
+                  {
+                    name: 'Liquity V2',
+                    website: 'https://liquity.org',
+                    uniqueness: 'User-Set Rates',
+                    highlights: 'Multi-collateral evolution. Introducing BOLD and market-driven interest rates.',
+                    rateType: 'Dynamic / User-Set',
+                    ltvRange: 'Up to 90.9%',
+                    access: 'Permissionless',
+                    risks: 'Interest rate volatility, competitive liq thresholds',
+                    chains: ['Ethereum']
+                  },
+                  {
+                    name: 'Moonwell',
+                    website: 'https://moonwell.fi',
+                    uniqueness: 'Base L3 Native',
+                    highlights: 'Leading lending protocol on Base and Moonbeam. Deep integration with Coinbase ecosystem.',
+                    rateType: 'Floating',
+                    ltvRange: '0% - 80%',
+                    access: 'Permissionless',
+                    risks: 'Sequencer uptime, bridge finality dependency',
+                    chains: ['Base', 'Optimism', 'Moonbeam']
+                  },
+                  {
+                    name: 'Kamino',
+                    website: 'https://kamino.finance',
+                    uniqueness: 'Solana Unified Layer',
+                    highlights: 'Combines lending, automated liquidity management, and leverage into a single Solana interface.',
+                    rateType: 'Floating',
+                    ltvRange: 'Up to 90%',
+                    access: 'Permissionless',
+                    risks: 'Solana network congestion, high asset monitoring',
+                    chains: ['Solana']
+                  },
+                  {
+                    name: 'Zentra',
+                    website: 'https://zentra.finance',
+                    uniqueness: 'Bitcoin ZK-Native',
+                    highlights: 'Native money market for Citrea (Bitcoin L2). Enables trust-minimized BTC borrowing.',
+                    rateType: 'Floating',
+                    ltvRange: 'TBD',
+                    access: 'Permissionless',
+                    risks: 'New protocol codebase, Bitcoin bridge/BitVM risk',
+                    chains: ['Citrea']
+                  },
+                  {
+                    name: 'Zharta',
+                    website: 'https://zharta.io',
+                    uniqueness: 'Fixed-Rate RWA Credit',
+                    highlights: 'Fixed-rate institutional credit for tokenized securities. Focused on bespoke, oracle-free lending.',
+                    rateType: 'Fixed / Negotiated',
+                    ltvRange: '80% - 90%',
+                    access: 'KYC Needed',
+                    risks: 'Counterparty default, legal enforceability risk',
+                    chains: ['Ethereum']
+                  },
+                  {
+                    name: 'Centrifuge',
+                    website: 'https://centrifuge.io',
+                    uniqueness: 'Real-World Credit Bridge',
+                    highlights: 'The leading RWA platform onchain. Connects businesses seeking credit with DeFi liquidity.',
+                    rateType: 'Variable / Pool-based',
+                    ltvRange: '80% - 90%',
+                    access: 'KYC Needed',
+                    risks: 'Off-chain credit risk, pool liquidity depth',
+                    chains: ['Centrifuge', 'Ethereum', 'Base']
+                  },
+                  {
+                    name: 'Maple Finance',
+                    website: 'https://maple.finance',
+                    uniqueness: 'Institutional Hub',
+                    highlights: 'Uncollateralized and secured credit for institutional borrowers with delegated risk management.',
+                    rateType: 'Bespoke / Floating',
+                    ltvRange: 'Variable',
+                    access: 'KYC Needed',
+                    risks: 'Underwriting quality, borrower insolvency',
+                    chains: ['Ethereum', 'Solana']
+                  },
+                  {
+                    name: 'Clearpool',
+                    website: 'https://clearpool.finance',
+                    uniqueness: 'Unsecured Credit Pools',
+                    highlights: 'Institutional-grade credit marketplace allowing vetted firms to borrow without crypto collateral.',
+                    rateType: 'Floating',
+                    ltvRange: 'N/A (Credit-based)',
+                    access: 'KYC (Prime) / Mixed',
+                    risks: 'Unsecured default risk, platform trust',
+                    chains: ['Ethereum', 'Base', 'Ozean']
+                  },
+                  {
+                    name: 'Goldfinch',
+                    website: 'https://goldfinch.finance',
+                    uniqueness: 'EM Credit Expansion',
+                    highlights: 'Bringing crypto lending to real-world businesses in emerging markets without crypto collateral.',
+                    rateType: 'Fixed',
+                    ltvRange: 'N/A (Credit-based)',
+                    access: 'KYC Needed',
+                    risks: 'Borrower default, lack of liquidation buffer',
+                    chains: ['Ethereum']
+                  }
+                ].map(p => (
+                  <tr key={p.name}>
+                    <td data-label="Protocol" style={{ fontWeight: 700 }}>{p.name}</td>
+                    <td data-label="Summary" style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>{p.highlights}</td>
+                    <td data-label="Uniqueness">
+                      <span className="badge" style={{ background: 'rgba(34, 211, 238, 0.1)', color: 'var(--accent-primary)', fontSize: '0.75rem' }}>
+                        {p.uniqueness}
                       </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
+                    </td>
+                    <td data-label="Rate Mechanism" style={{ fontWeight: 600, fontSize: '0.85rem' }}>{p.rateType}</td>
+                    <td data-label="LTV Range" style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{p.ltvRange}</td>
+                    <td data-label="Access Type" style={{ fontSize: '0.85rem' }}>
+                      <span style={{ 
+                        color: p.access === 'Permissionless' ? '#4ade80' : '#fbbf24',
+                        background: p.access === 'Permissionless' ? 'rgba(74, 222, 128, 0.1)' : 'rgba(251, 191, 36, 0.1)',
+                        padding: '0.2rem 0.5rem',
+                        borderRadius: '4px',
+                        fontWeight: 600
+                      }}>
+                        {p.access}
+                      </span>
+                    </td>
+                    <td data-label="Potential Risk Factors" style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{p.risks}</td>
+                    <td data-label="Chains Supported">
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
+                        {p.chains.map(c => (
+                          <span key={c} style={{ fontSize: '10px', padding: '2px 6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)' }}>{c}</span>
+                        ))}
+                      </div>
+                    </td>
+                    <td data-label="Website">
+                      <a href={p.website} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.85rem', color: 'var(--accent-primary)', textDecoration: 'none' }}>
+                        {p.website.replace('https://', '')} ↗
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </main>
       )}
