@@ -24,12 +24,15 @@ Follow these steps to deploy your DeFi dashboard.
 ## 2. Frontend (GitHub Pages)
 
 ### Configuration
-1.  **API URL**: In `.github/workflows/deploy_frontend.yml`, update `VITE_API_BASE_URL` to your GAE URL (e.g., `https://your-project.appspot.com/api`).
-2.  **GitHub Secrets**: (Optional) For better security, store `VITE_API_BASE_URL` as a GitHub Action Secret.
-3.  **Deployment**:
+1.  **API URL**: I have updated `.github/workflows/deploy_frontend.yml` with your App Engine URL: `https://borrow-rates-api.uc.r.appspot.com/api`.
+2.  **Deployment**:
     - Push your changes to the `main` branch.
-    - GitHub Actions will automatically build and deploy to the `gh-pages` branch.
-    - In your GitHub Repository Settings > Pages, ensure the source is set to the `gh-pages` branch.
+    - GitHub Actions will automatically build and deploy the `frontend/dist` folder to the `gh-pages` branch.
+3.  **Enable GitHub Pages**:
+    - Go to your GitHub Repository **Settings** > **Pages**.
+    - Under **Build and deployment** > **Source**, ensure it is set to **Deploy from a branch**.
+    - Select the `gh-pages` branch and the `/ (root)` folder.
+    - Click **Save**.
 
 ## 3. Important Notes
 - **CORS**: Ensure the backend `src/api.ts` allows requests from your GitHub Pages domain (typically `https://<username>.github.io`).
