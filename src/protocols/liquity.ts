@@ -1,6 +1,6 @@
-import { publicClient, getLogsInChunks, getAddress } from '../utils/rpc';
-import { ILoanRepository, LoanPosition } from '../db/interface';
-import { ProtocolScanner, ScannerStatus } from '../utils/types';
+import { publicClient, getLogsInChunks, getAddress } from '../utils/rpc.js';
+import { ILoanRepository, LoanPosition } from '../db/interface.js';
+import { ProtocolScanner, ScannerStatus } from '../utils/types.js';
 import { parseAbiItem } from 'viem';
 
 const TROVE_MANAGER_ADDRESS = getAddress('0xA39739EFc46Aa59b77d71261b26CCEB3148ab3e4');

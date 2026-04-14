@@ -1,9 +1,14 @@
-import { getPublicClient } from '../utils/rpc';
-import { querySubgraph } from '../utils/subgraph';
-import { getAssetCategory, getAssetPath } from '../utils/assets';
+import { getPublicClient } from '../utils/rpc.js';
+import { querySubgraph } from '../utils/subgraph.js';
+import { getAssetCategory, getAssetPath } from '../utils/assets.js';
 import { parseAbiItem, formatUnits, erc20Abi } from 'viem';
 const MORPHO_BLUE_ADDRESS = '0xBBBBBbbBBb9cCEdAb539639EB74044813E659393';
 const MORPHO_API_URL = 'https://blue-api.morpho.org/graphql';
+const ADAPTIVE_CURVE_IRMS = {
+    1: '0x870aC11D48B15DB9a138Cf899d20F13F79Ba00BC',
+    8453: '0x46415998764C29aB2a25CbeA6254146D50D22687',
+    42161: '0x66F30587FB8D4206918deb78ecA7d5eBbafD06DA'
+};
 const CHAIN_IDS = {
     'Ethereum': 1,
     'Base': 8453,
@@ -118,17 +123,19 @@ export class MorphoScanner {
         }
     }
     async getMarketRate(collateralAsset, debtAsset, marketId) {
+        if (!marketId)
+            return null;
         try {
             const query = `
-        query GetMarketRate($id: String!, $chainId: Int!) {
-          market(id: $id, chainId: $chainId) {
+        query GetMarketRate($id: String!) {
+          market(id: $id) {
             state {
               borrowApy
             }
           }
         }
       `;
-            const data = await querySubgraph(MORPHO_API_URL, query, { id: marketId, chainId: this.chainId });
+            const data = await querySubgraph(MORPHO_API_URL, query, { id: marketId });
             if (data.market && data.market.state && data.market.state.borrowApy) {
                 return Number(data.market.state.borrowApy);
             }
@@ -144,10 +151,11 @@ export class MorphoScanner {
         try {
             const query = `
         query GetTopMarkets($chainId: Int!) {
-          markets(where: { chainId_in: [$chainId] }, first: 20, orderBy: BorrowAssets, orderDirection: Desc) {
+          markets(where: { chainId_in: [$chainId] }, first: 50, orderBy: BorrowAssets, orderDirection: Desc) {
             items {
               uniqueKey
               lltv
+              irmAddress
               collateralAsset {
                 symbol
               }
@@ -184,8 +192,11 @@ export class MorphoScanner {
                         collateralCategory: getAssetCategory(collateralSymbol),
                         debtCategory: getAssetCategory(debtSymbol),
                         collateralPath: getAssetPath(collateralSymbol),
-                        debtPath: getAssetPath(debtSymbol)
+                        debtPath: getAssetPath(debtSymbol),
+                        rateType: (item.irmAddress === ADAPTIVE_CURVE_IRMS[this.chainId]) ? 'floating' : 'fixed'
                     });
+                    // Strict 1s delay
+                    await new Promise(resolve => setTimeout(resolve, 1000));
                 }
             }
         }

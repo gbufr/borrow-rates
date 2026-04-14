@@ -1,6 +1,6 @@
-import { ILoanRepository } from '../db/interface';
-import { ProtocolScanner, ScannerStatus } from '../utils/types';
-import { getAddress } from '../utils/rpc';
+import { ILoanRepository } from '../db/interface.js';
+import { ProtocolScanner, ScannerStatus } from '../utils/types.js';
+import { getAddress } from '../utils/rpc.js';
 
 const USDS_ADDRESS = getAddress('0xd7F9f9fDC4C615891800d333b760db126746f369');
 

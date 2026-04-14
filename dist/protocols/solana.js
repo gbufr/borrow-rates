@@ -1,4 +1,4 @@
-import { getAssetCategory } from '../utils/assets';
+import { getAssetCategory } from '../utils/assets.js';
 import axios from 'axios';
 const KAMINO_API_URL = 'https://api.kamino.finance/v2/markets/main';
 const SOLEND_API_URL = 'https://api.solend.fi/v2/markets/results?ids=main';
@@ -64,7 +64,8 @@ export class SolanaScanner {
                             collateralCategory: 'SOL',
                             debtCategory: getAssetCategory(symbol),
                             collateralPath: null,
-                            debtPath: null
+                            debtPath: null,
+                            rateType: 'floating'
                         });
                     }
                 }
@@ -102,7 +103,8 @@ export class SolanaScanner {
                             collateralCategory: 'SOL',
                             debtCategory: getAssetCategory(symbol),
                             collateralPath: null,
-                            debtPath: null
+                            debtPath: null,
+                            rateType: 'floating'
                         });
                         console.log(`[SUCCESS] Solend ${symbol}: ${(borrowRate * 100).toFixed(2)}%`);
                     }

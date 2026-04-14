@@ -1,7 +1,8 @@
 import express from 'express';
 import cors from 'cors';
-import { getDatabaseAdapter } from './db';
-import { RiskService, PROTOCOL_THRESHOLDS } from './utils/risk';
+import { getDatabaseAdapter } from './db/index.js';
+import { RiskService, PROTOCOL_THRESHOLDS } from './utils/risk.js';
+import { syncAllRates } from './scripts/sync_rates.js';
 const app = express();
 const port = process.env.PORT || 3001;
 const ALLOWED_ORIGINS = [
@@ -9,8 +10,8 @@ const ALLOWED_ORIGINS = [
     'http://localhost:5174',
     'http://localhost:5175',
     'http://localhost:3000',
-    'https://borrow-rates.org',
-    'http://borrow-rates.org'
+    'https://borrowdesk.org',
+    'http://borrowdesk.org'
 ];
 app.use(cors({
     origin: (origin, callback) => {
@@ -98,7 +99,7 @@ app.get('/api/rates', async (req, res) => {
 app.get('/api/prices', (req, res) => {
     res.json(riskService['priceCache']);
 });
-import { GCSStorage } from './utils/gcs';
+import { GCSStorage } from './utils/gcs.js';
 async function start() {
     // Restore DB from cloud storage in production
     if (process.env.NODE_ENV === 'production') {
@@ -107,6 +108,19 @@ async function start() {
     const db = await getDatabaseAdapter();
     riskService = new RiskService(db);
     await riskService.syncPricesFromDb();
+    // Background Rate Sync (every 1 hour)
+    setInterval(async () => {
+        console.log('[API] Starting background interest rate sync...');
+        try {
+            await syncAllRates(db);
+            console.log('[API] Background interest rate sync completed.');
+        }
+        catch (e) {
+            console.error('[API] Background interest rate sync failed:', e);
+        }
+    }, 60 * 60 * 1000);
+    // Initial sync on startup
+    syncAllRates(db).catch((e) => console.error('[API] Initial rate sync failed:', e.message));
     setInterval(async () => {
         try {
             await riskService.syncPricesFromDb();

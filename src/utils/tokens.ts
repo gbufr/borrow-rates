@@ -1,4 +1,4 @@
-import { publicClient } from './rpc';
+import { publicClient } from './rpc.js';
 import { parseAbiItem } from 'viem';
 
 const SYMBOL_CACHE: Record<string, string> = {

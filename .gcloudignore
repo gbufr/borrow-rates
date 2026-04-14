@@ -1,0 +1,14 @@
+.gcloudignore
+.git
+.gitignore
+node_modules/
+frontend/
+data/
+*.db
+*.sqlite
+*.log
+*.txt
+.env
+src/
+# Only need dist/ for production runtime
+#!include .gitignore

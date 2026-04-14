@@ -1,4 +1,4 @@
-import { getDatabaseAdapter } from '../db';
+import { getDatabaseAdapter } from '../db/index';
 import { SyncOrchestrator } from '../utils/SyncOrchestrator';
 import { MorphoScanner } from '../protocols/morpho';
 import { AaveScanner } from '../protocols/aave';

@@ -1,4 +1,4 @@
-import { publicClient } from './rpc';
+import { publicClient } from './rpc.js';
 import { parseAbiItem } from 'viem';
 const SYMBOL_CACHE = {
     '0x66a1e37c9b0eaddca17d3662d6c05f4decf3e110': 'USR',

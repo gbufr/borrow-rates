@@ -1,4 +1,4 @@
-import { getAddress } from '../utils/rpc';
+import { getAddress } from '../utils/rpc.js';
 const USDS_ADDRESS = getAddress('0xd7F9f9fDC4C615891800d333b760db126746f369');
 export class SkyScanner {
     db;

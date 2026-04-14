@@ -1,7 +1,7 @@
-import { publicClient, getLogsInChunks, getAddress } from '../utils/rpc';
-import { ILoanRepository, LoanPosition } from '../db/interface';
-import { ProtocolScanner, ScannerStatus } from '../utils/types';
-import { getAssetCategory, getAssetPath } from '../utils/assets';
+import { publicClient, getLogsInChunks, getAddress } from '../utils/rpc.js';
+import { ILoanRepository, LoanPosition } from '../db/interface.js';
+import { ProtocolScanner, ScannerStatus } from '../utils/types.js';
+import { getAssetCategory, getAssetPath } from '../utils/assets.js';
 import { parseAbiItem } from 'viem';
 
 const COLLATERAL_REGISTRY_ADDRESS = getAddress('0xd99de73b95236f69a559117ecd6f519af780f3f7');

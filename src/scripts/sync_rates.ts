@@ -1,16 +1,17 @@
-import { getDatabaseAdapter } from '../db/index';
-import { MorphoScanner } from '../protocols/morpho';
-import { AaveScanner } from '../protocols/aave';
-import { LiquityScanner } from '../protocols/liquity';
-import { LiquityV2Scanner } from '../protocols/liquityV2';
-import { SkyScanner } from '../protocols/sky';
-import { MakerScanner } from '../protocols/maker';
-import { SolanaScanner } from '../protocols/solana';
-import { MoonwellScanner } from '../protocols/moonwell';
-import { ProtocolScanner } from '../utils/types';
-import { getAssetCategory, getAssetPath } from '../utils/assets';
-import { getAddress } from '../utils/rpc';
-import { GCSStorage } from '../utils/gcs';
+import { getDatabaseAdapter, ILoanRepository } from '../db/index.js';
+import { MorphoScanner } from '../protocols/morpho.js';
+import { AaveScanner } from '../protocols/aave.js';
+import { LiquityScanner } from '../protocols/liquity.js';
+import { LiquityV2Scanner } from '../protocols/liquityV2.js';
+import { SkyScanner } from '../protocols/sky.js';
+import { MakerScanner } from '../protocols/maker.js';
+import { SolanaScanner } from '../protocols/solana.js';
+import { MoonwellScanner } from '../protocols/moonwell.js';
+import { ProtocolScanner } from '../utils/types.js';
+import { getAssetCategory, getAssetPath } from '../utils/assets.js';
+import { getAddress } from '../utils/rpc.js';
+import { GCSStorage } from '../utils/gcs.js';
+import { fileURLToPath } from 'url';
 
 const ASSETS = {
   WETH: { symbol: 'WETH', address: getAddress('0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2') },
@@ -85,14 +86,14 @@ const PAIRS = [
   { coll: ASSETS.weETH, debt: ASSETS.USDS },
 ];
 
-async function syncAllRates() {
+async function syncAllRates(passedDb?: ILoanRepository) {
   console.log('--- Starting Comprehensive Interest Rate Sync ---');
   
-  if (process.env.NODE_ENV === 'production') {
+  if (!passedDb && process.env.NODE_ENV === 'production') {
     await GCSStorage.restore();
   }
 
-  const db = await getDatabaseAdapter();
+  const db = passedDb || await getDatabaseAdapter();
   
   const scanners: ProtocolScanner[] = [
     // Ethereum Mainnet
@@ -334,18 +335,62 @@ async function syncAllRates() {
     console.error('Failed to sync Citrea manual rates:', e);
   }
 
+  console.log('\n--- Syncing Institutional RWA Markets (Aave Horizon) ---');
+  try {
+    const institutionalRates = [
+      { 
+        coll: 'Ondo OUSG', 
+        debt: 'GHO', 
+        rate: 0.055, 
+        ltv: 0.85, 
+        threshold: 0.90, 
+        protocol: 'Aave Horizon',
+        chain: 'Ethereum',
+        category: 'USD', // OUSG is pegged to USD
+        path: 'Treasuries ➔ OUSG'
+      }
+    ];
+
+    for (const r of institutionalRates) {
+      await db.upsertRate({
+        protocol: r.protocol,
+        assetPair: `${r.coll}/${r.debt}`,
+        rate: r.rate,
+        lastUpdateTimestamp: timestamp,
+        chain: r.chain,
+        collateralSymbol: r.coll,
+        debtSymbol: r.debt,
+        isRWA: true,
+        ltv: r.ltv,
+        liquidationThreshold: r.threshold,
+        liquidationPenalty: 0.05,
+        collateralCategory: r.category,
+        debtCategory: getAssetCategory(r.debt),
+        collateralPath: r.path,
+        debtPath: null,
+        rateType: 'floating'
+      });
+      console.log(`[SUCCESS] ${r.protocol} ${r.coll}/${r.debt}: ${(r.rate * 100).toFixed(2)}%`);
+      successCount++;
+    }
+  } catch (e) {
+    console.error('Failed to sync Institutional manual rates:', e);
+  }
+
   console.log(`\n--- Sync Finished ---`);
   console.log(`Success: ${successCount}`);
   console.log(`Failed: ${failCount}`);
   
-  await db.close();
+  if (!passedDb) {
+    await db.close();
+  }
 
   if (process.env.NODE_ENV === 'production') {
     await GCSStorage.backup();
   }
 }
 
-if (require.main === module) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   syncAllRates().catch(console.error);
 }
 

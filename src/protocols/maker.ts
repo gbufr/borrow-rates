@@ -1,6 +1,6 @@
-import { publicClient, getLogsInChunks, getAddress } from '../utils/rpc';
-import { ILoanRepository, LoanPosition } from '../db/interface';
-import { ProtocolScanner, ScannerStatus } from '../utils/types';
+import { publicClient, getLogsInChunks, getAddress } from '../utils/rpc.js';
+import { ILoanRepository, LoanPosition } from '../db/interface.js';
+import { ProtocolScanner, ScannerStatus } from '../utils/types.js';
 import { parseAbiItem, hexToBytes, bytesToHex } from 'viem';
 
 const CDP_MANAGER_ADDRESS = getAddress('0x5ef30b9986345249bc32d8928B7ee64DE9435E39');

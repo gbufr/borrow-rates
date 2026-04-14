@@ -1,7 +1,7 @@
-import { getPublicClient, getAddress } from '../utils/rpc';
-import { ILoanRepository, LoanPosition } from '../db/interface';
-import { ProtocolScanner, ScannerStatus } from '../utils/types';
-import { getAssetCategory, getAssetPath } from '../utils/assets';
+import { getPublicClient, getAddress } from '../utils/rpc.js';
+import { ILoanRepository, LoanPosition } from '../db/interface.js';
+import { ProtocolScanner, ScannerStatus } from '../utils/types.js';
+import { getAssetCategory, getAssetPath } from '../utils/assets.js';
 import { parseAbiItem, formatUnits, erc20Abi } from 'viem';
 
 const COMPTROLLER_ADDRESS = '0xfBb21d0380beE3312B33c4353c8936a0F13EF26C';
@@ -95,7 +95,8 @@ export class MoonwellScanner implements ProtocolScanner {
             collateralCategory: getAssetCategory('WETH'),
             debtCategory: getAssetCategory(market.symbol),
             collateralPath: getAssetPath('WETH'),
-            debtPath: getAssetPath(market.symbol)
+            debtPath: getAssetPath(market.symbol),
+            rateType: 'floating'
           });
           console.log(`[Moonwell] Synced ${market.symbol}: ${(rate * 100).toFixed(2)}%`);
         }

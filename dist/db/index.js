@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
-import { SQLiteAdapter } from './sqlite';
-import { PostgresAdapter } from './postgres';
+import { SQLiteAdapter } from './sqlite.js';
+import { PostgresAdapter } from './postgres.js';
 dotenv.config();
 export async function getDatabaseAdapter() {
     const databaseUrl = process.env.DATABASE_URL;
@@ -16,4 +16,4 @@ export async function getDatabaseAdapter() {
         return adapter;
     }
 }
-export * from './interface';
+export * from './interface.js';

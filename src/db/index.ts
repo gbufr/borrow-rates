@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
-import { ILoanRepository } from './interface';
-import { SQLiteAdapter } from './sqlite';
-import { PostgresAdapter } from './postgres';
+import { ILoanRepository } from './interface.js';
+import { SQLiteAdapter } from './sqlite.js';
+import { PostgresAdapter } from './postgres.js';
 
 dotenv.config();
 
@@ -20,4 +20,4 @@ export async function getDatabaseAdapter(): Promise<ILoanRepository> {
   }
 }
 
-export * from './interface';
+export * from './interface.js';

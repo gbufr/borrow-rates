@@ -81,6 +81,13 @@ export class SQLiteAdapter {
                 .execute();
         }
         catch (e) { }
+        try {
+            await this.db.schema
+                .alterTable('rates')
+                .addColumn('rateType', 'text')
+                .execute();
+        }
+        catch (e) { }
     }
     async upsertPosition(position) {
         await this.db
@@ -133,6 +140,14 @@ export class SQLiteAdapter {
     }
     async getAllRates() {
         return await this.db.selectFrom('rates').selectAll().execute();
+    }
+    async getOldestRates(limit) {
+        return await this.db
+            .selectFrom('rates')
+            .selectAll()
+            .orderBy('lastUpdateTimestamp', 'asc')
+            .limit(limit)
+            .execute();
     }
     async deleteRatesForProtocol(protocol) {
         await this.db.deleteFrom('rates').where('protocol', '=', protocol).execute();

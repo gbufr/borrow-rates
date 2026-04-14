@@ -1,6 +1,6 @@
-import { ProtocolScanner, ScannerStatus } from './types';
-import { ILoanRepository } from '../db/interface';
-import { publicClient } from './rpc';
+import { ProtocolScanner, ScannerStatus } from './types.js';
+import { ILoanRepository } from '../db/interface.js';
+import { publicClient } from './rpc.js';
 import pLimit from 'p-limit';
 
 export interface SyncConfig {

@@ -1,6 +1,6 @@
 import { Kysely, PostgresDialect } from 'kysely';
 import { Pool } from 'pg';
-import { DatabaseSchema, ILoanRepository, LoanPosition, AssetPrice, MarketRate } from './interface';
+import { DatabaseSchema, ILoanRepository, LoanPosition, AssetPrice, MarketRate } from './interface.js';
 
 export class PostgresAdapter implements ILoanRepository {
   private db: Kysely<DatabaseSchema>;

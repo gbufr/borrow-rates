@@ -1,10 +1,10 @@
-runtime: nodejs20
+runtime: nodejs22
 instance_class: F1
 entrypoint: npm start
 
 env_variables:
   NODE_ENV: "production"
-  GCS_BUCKET_NAME: "borrow-rates-db"
+  GCS_BUCKET_NAME: "borrowdesk-db"
   # DATABASE_URL: "postgresql://user:pass@/dbname?host=/cloudsql/project:region:instance"
   ALCHEMY_API_KEY: "2scV0IeBl87hIlZet0UIlUayxWAjeZD6"
 

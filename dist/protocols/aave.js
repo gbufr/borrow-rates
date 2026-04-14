@@ -1,4 +1,4 @@
-import { getPublicClient, getLogsInChunks, getAddress } from '../utils/rpc';
+import { getPublicClient, getLogsInChunks, getAddress } from '../utils/rpc.js';
 import { parseAbiItem } from 'viem';
 import pLimit from 'p-limit';
 const ADDRESSES = {
@@ -49,6 +49,13 @@ const AAVE_POOL_ABI = [
         ],
         "stateMutability": "view",
         "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getReservesList",
+        "outputs": [{ "name": "", "type": "address[]" }],
+        "stateMutability": "view",
+        "type": "function"
     }
 ];
 export class AaveScanner {
@@ -94,65 +101,151 @@ export class AaveScanner {
         console.log(`Syncing all Aave V3 rates on ${this.chain}...`);
         const client = this.getClient();
         const timestamp = Math.floor(Date.now() / 1000);
-        // List of assets to check (common ones)
-        const assets = [
-            { symbol: 'WETH', address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2' },
-            { symbol: 'WBTC', address: '0x2260FAC5E5542a773Aa44fBCfedF7C193bc2C599' },
-            { symbol: 'USDC', address: '0xA0b86991c6218b36c1d19D4a2e9eb0cE3606eb48' },
-            { symbol: 'USDT', address: '0xdAC17F958D2ee523a2206206994597C13D831ec7' },
-            { symbol: 'DAI', address: '0x6B175474E89094C44Da98B954EedeAC495271d0F' },
-            { symbol: 'wstETH', address: '0x7f39C581F595B53c5cb19bD0b3f8DA6c935E2Ca0' }
-        ];
-        for (const asset of assets) {
-            try {
-                const rate = await this.getMarketRate(asset.address, asset.address);
-                if (rate !== null) {
-                    // Fetch Configuration for LTV/LT
-                    const config = await client.readContract({
-                        address: this.dataProviderAddress,
-                        abi: [{
-                                "inputs": [{ "name": "asset", "type": "address" }],
-                                "name": "getReserveConfigurationData",
-                                "outputs": [
-                                    { "name": "ltv", "type": "uint256" },
-                                    { "name": "liquidationThreshold", "type": "uint256" },
-                                    { "name": "liquidationBonus", "type": "uint256" },
-                                    { "name": "decimals", "type": "uint256" },
-                                    { "name": "reserveFactor", "type": "uint256" },
-                                    { "name": "usageAsCollateralEnabled", "type": "bool" },
-                                    { "name": "borrowingEnabled", "type": "bool" },
-                                    { "name": "stableBorrowRateEnabled", "type": "bool" },
-                                    { "name": "isActive", "type": "bool" },
-                                    { "name": "isFrozen", "type": "bool" }
+        let reserves = [];
+        try {
+            reserves = await client.readContract({
+                address: this.dataProviderAddress,
+                abi: [{
+                        "inputs": [],
+                        "name": "getAllReservesTokens",
+                        "outputs": [{
+                                "components": [
+                                    { "name": "symbol", "type": "string" },
+                                    { "name": "tokenAddress", "type": "address" }
                                 ],
-                                "stateMutability": "view",
-                                "type": "function"
+                                "name": "",
+                                "type": "tuple[]"
                             }],
-                        functionName: 'getReserveConfigurationData',
-                        args: [getAddress(asset.address)],
-                    });
-                    await db.upsertRate({
-                        protocol: this.getName(),
-                        assetPair: `${asset.symbol}/${asset.symbol}`, // Simplified for Aave direct borrow
-                        rate: rate,
-                        lastUpdateTimestamp: timestamp,
-                        chain: this.chain,
-                        collateralSymbol: asset.symbol,
-                        debtSymbol: asset.symbol,
-                        isRWA: false,
-                        ltv: Number(config.ltv) / 10000,
-                        liquidationThreshold: Number(config.liquidationThreshold) / 10000,
-                        liquidationPenalty: (Number(config.liquidationBonus) - 10000) / 10000,
-                        collateralCategory: 'N/A',
-                        debtCategory: 'N/A',
-                        collateralPath: null,
-                        debtPath: null
-                    });
+                        "stateMutability": "view",
+                        "type": "function"
+                    }],
+                functionName: 'getAllReservesTokens',
+            });
+        }
+        catch (e) {
+            console.warn(`[${this.getName()}] Dynamic discovery failed, using fallback list: ${e.message}`);
+            // Fallback asset list per chain
+            const fallbacks = {
+                'Ethereum': [
+                    { symbol: 'WETH', tokenAddress: getAddress('0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2') },
+                    { symbol: 'WBTC', tokenAddress: getAddress('0x2260FAC5E5542a773Aa44fBCfedF7C193bc2C599') },
+                    { symbol: 'USDC', tokenAddress: getAddress('0xA0b86991c6218b36c1d19D4a2e9eb0Ce3606eb48') },
+                    { symbol: 'USDT', tokenAddress: getAddress('0xdAC17F958D2ee523a2206206994597C13D831ec7') },
+                    { symbol: 'DAI', tokenAddress: getAddress('0x6B175474E89094C44Da98B954EedeAC495271d0F') },
+                ],
+                'Base': [
+                    { symbol: 'WETH', tokenAddress: getAddress('0x4200000000000000000000000000000000000006') },
+                    { symbol: 'cbBTC', tokenAddress: getAddress('0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf') },
+                    { symbol: 'USDC', tokenAddress: getAddress('0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913') },
+                ],
+                'Arbitrum': [
+                    { symbol: 'WETH', tokenAddress: getAddress('0x82aF49447D8a07e3bd95BD0d56f35241523fBab1') },
+                    { symbol: 'WBTC', tokenAddress: getAddress('0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f') },
+                    { symbol: 'USDC', tokenAddress: getAddress('0xaf88d065e77c8cC2239327C5EDb3A432268e5831') },
+                ]
+            };
+            reserves = fallbacks[this.chain] || fallbacks['Ethereum'];
+        }
+        try {
+            console.log(`[${this.getName()}] Syncing ${reserves.length} reserves.`);
+            for (const reserve of reserves) {
+                const symbol = reserve.symbol;
+                const reserveAddress = reserve.tokenAddress;
+                // Skip some assets to avoid hitting limits too hard, only check known symbols if needed
+                // but for now we try all with a delay.
+                try {
+                    const rate = await this.getMarketRate(reserveAddress, reserveAddress);
+                    if (rate !== null) {
+                        // Fetch Configuration
+                        const config = await client.readContract({
+                            address: this.dataProviderAddress,
+                            abi: [{
+                                    "inputs": [{ "name": "asset", "type": "address" }],
+                                    "name": "getReserveData",
+                                    "outputs": [
+                                        { "name": "unbacked", "type": "uint256" },
+                                        { "name": "accruedToTreasuryScaled", "type": "uint256" },
+                                        { "name": "totalAToken", "type": "uint256" },
+                                        { "name": "totalStableDebt", "type": "uint256" },
+                                        { "name": "totalVariableDebt", "type": "uint256" },
+                                        { "name": "liquidityRate", "type": "uint256" },
+                                        { "name": "variableBorrowRate", "type": "uint256" },
+                                        { "name": "stableBorrowRate", "type": "uint256" },
+                                        { "name": "averageStableBorrowRate", "type": "uint256" },
+                                        { "name": "liquidityIndex", "type": "uint256" },
+                                        { "name": "variableBorrowIndex", "type": "uint256" },
+                                        { "name": "lastUpdateTimestamp", "type": "uint40" }
+                                    ],
+                                    "stateMutability": "view",
+                                    "type": "function"
+                                },
+                                {
+                                    "inputs": [],
+                                    "name": "getAllReservesTokens",
+                                    "outputs": [{
+                                            "components": [
+                                                { "name": "symbol", "type": "string" },
+                                                { "name": "tokenAddress", "type": "address" }
+                                            ],
+                                            "name": "",
+                                            "type": "tuple[]"
+                                        }],
+                                    "stateMutability": "view",
+                                    "type": "function"
+                                },
+                                {
+                                    "inputs": [{ "name": "asset", "type": "address" }],
+                                    "name": "getReserveConfigurationData",
+                                    "outputs": [
+                                        { "name": "ltv", "type": "uint256" },
+                                        { "name": "liquidationThreshold", "type": "uint256" },
+                                        { "name": "liquidationBonus", "type": "uint256" },
+                                        { "name": "decimals", "type": "uint256" },
+                                        { "name": "reserveFactor", "type": "uint256" },
+                                        { "name": "usageAsCollateralEnabled", "type": "bool" },
+                                        { "name": "borrowingEnabled", "type": "bool" },
+                                        { "name": "stableBorrowRateEnabled", "type": "bool" },
+                                        { "name": "isActive", "type": "bool" },
+                                        { "name": "isFrozen", "type": "bool" }
+                                    ],
+                                    "stateMutability": "view",
+                                    "type": "function"
+                                }],
+                            functionName: 'getReserveConfigurationData',
+                            args: [reserveAddress],
+                        });
+                        const { getAssetCategory, getAssetPath } = await import('../utils/assets.js');
+                        await db.upsertRate({
+                            protocol: this.getName(),
+                            assetPair: `${symbol}/${symbol}`,
+                            rate: rate,
+                            lastUpdateTimestamp: timestamp,
+                            chain: this.chain,
+                            collateralSymbol: symbol,
+                            debtSymbol: symbol,
+                            isRWA: false,
+                            ltv: Number(config.ltv ?? 0) / 10000,
+                            liquidationThreshold: Number(config.liquidationThreshold ?? 0) / 10000,
+                            liquidationPenalty: (Number(config.liquidationBonus ?? 10000) - 10000) / 10000,
+                            collateralCategory: getAssetCategory(symbol),
+                            debtCategory: getAssetCategory(symbol),
+                            collateralPath: getAssetPath(symbol),
+                            debtPath: null,
+                            rateType: 'floating'
+                        });
+                        console.log(`[SUCCESS] ${this.getName()} ${symbol}: ${(rate * 100).toFixed(2)}%`);
+                    }
+                    // Strict 1s delay
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+                catch (e) {
+                    console.error(`[${this.getName()}] Failed to sync reserve ${symbol}:`, e.message);
+                    await new Promise(resolve => setTimeout(resolve, 1000)); // Longer wait on error
                 }
             }
-            catch (e) {
-                // Skip silently
-            }
+        }
+        catch (e) {
+            console.error(`[${this.getName()}] Failed to get reserves list:`, e.message);
         }
     }
     async scanRange(fromBlock, toBlock) {
@@ -205,83 +298,89 @@ export class AaveScanner {
     }
     async getMarketRate(collateralAsset, debtAsset, marketId) {
         const client = this.getClient();
-        // Try Data Provider first
-        try {
-            const data = await client.readContract({
-                address: this.dataProviderAddress,
-                abi: [{
-                        "inputs": [{ "name": "asset", "type": "address" }],
-                        "name": "getReserveData",
-                        "outputs": [
-                            { "name": "unbacked", "type": "uint256" },
-                            { "name": "accruedToTreasuryScaled", "type": "uint256" },
-                            { "name": "totalAToken", "type": "uint256" },
-                            { "name": "totalStableDebt", "type": "uint256" },
-                            { "name": "totalVariableDebt", "type": "uint256" },
-                            { "name": "liquidityRate", "type": "uint256" },
-                            { "name": "variableBorrowRate", "type": "uint256" },
-                            { "name": "stableBorrowRate", "type": "uint256" },
-                            { "name": "averageStableBorrowRate", "type": "uint256" },
-                            { "name": "liquidityIndex", "type": "uint256" },
-                            { "name": "variableBorrowIndex", "type": "uint256" },
-                            { "name": "lastUpdateTimestamp", "type": "uint40" }
-                        ],
-                        "stateMutability": "view",
-                        "type": "function"
-                    }],
-                functionName: 'getReserveData',
-                args: [getAddress(debtAsset)],
-            });
-            if (data && data.variableBorrowRate) {
-                return Number(data.variableBorrowRate) / 1e27;
-            }
-            if (Array.isArray(data) && data.length > 6) {
-                return Number(data[6]) / 1e27;
-            }
-        }
-        catch (e) {
-            // Log silently and try next
-        }
-        // Try Pool directly
-        try {
-            const poolData = await client.readContract({
-                address: this.poolAddress,
-                abi: [{
-                        "inputs": [{ "name": "asset", "type": "address" }],
-                        "name": "getReserveData",
-                        "outputs": [{
-                                "components": [
-                                    { "name": "configuration", "type": "uint256" },
-                                    { "name": "liquidityIndex", "type": "uint128" },
-                                    { "name": "currentLiquidityRate", "type": "uint128" },
-                                    { "name": "variableBorrowIndex", "type": "uint128" },
-                                    { "name": "currentVariableBorrowRate", "type": "uint128" },
-                                    { "name": "currentStableBorrowRate", "type": "uint128" },
-                                    { "name": "lastUpdateTimestamp", "type": "uint40" },
-                                    { "name": "id", "type": "uint16" },
-                                    { "name": "aTokenAddress", "type": "address" },
-                                    { "name": "stableDebtTokenAddress", "type": "address" },
-                                    { "name": "variableDebtTokenAddress", "type": "address" },
-                                    { "name": "interestRateStrategyAddress", "type": "address" },
-                                    { "name": "accruedToTreasury", "type": "uint128" },
-                                    { "name": "unbacked", "type": "uint128" },
-                                    { "name": "isolationModeTotalDebt", "type": "uint128" }
+        let attempts = 0;
+        while (attempts < 3) {
+            try {
+                // Try Data Provider first
+                try {
+                    const data = await client.readContract({
+                        address: this.dataProviderAddress,
+                        abi: [{
+                                "inputs": [{ "name": "asset", "type": "address" }],
+                                "name": "getReserveData",
+                                "outputs": [
+                                    { "name": "unbacked", "type": "uint256" },
+                                    { "name": "accruedToTreasuryScaled", "type": "uint256" },
+                                    { "name": "totalAToken", "type": "uint256" },
+                                    { "name": "totalStableDebt", "type": "uint256" },
+                                    { "name": "totalVariableDebt", "type": "uint256" },
+                                    { "name": "liquidityRate", "type": "uint256" },
+                                    { "name": "variableBorrowRate", "type": "uint256" },
+                                    { "name": "stableBorrowRate", "type": "uint256" },
+                                    { "name": "averageStableBorrowRate", "type": "uint256" },
+                                    { "name": "liquidityIndex", "type": "uint256" },
+                                    { "name": "variableBorrowIndex", "type": "uint256" },
+                                    { "name": "lastUpdateTimestamp", "type": "uint40" }
                                 ],
-                                "name": "data",
-                                "type": "tuple"
+                                "stateMutability": "view",
+                                "type": "function"
                             }],
-                        "stateMutability": "view",
-                        "type": "function"
-                    }],
-                functionName: 'getReserveData',
-                args: [getAddress(debtAsset)],
-            });
-            if (poolData && poolData.currentVariableBorrowRate) {
-                return Number(poolData.currentVariableBorrowRate) / 1e27;
+                        functionName: 'getReserveData',
+                        args: [getAddress(debtAsset)],
+                    });
+                    if (data && data.variableBorrowRate) {
+                        return Number(data.variableBorrowRate) / 1e27;
+                    }
+                }
+                catch (e) {
+                    // Log silently and try next
+                }
+                // Try Pool directly
+                const poolData = await client.readContract({
+                    address: this.poolAddress,
+                    abi: [{
+                            "inputs": [{ "name": "asset", "type": "address" }],
+                            "name": "getReserveData",
+                            "outputs": [{
+                                    "components": [
+                                        { "name": "configuration", "type": "uint256" },
+                                        { "name": "liquidityIndex", "type": "uint128" },
+                                        { "name": "currentLiquidityRate", "type": "uint128" },
+                                        { "name": "variableBorrowIndex", "type": "uint128" },
+                                        { "name": "currentVariableBorrowRate", "type": "uint128" },
+                                        { "name": "currentStableBorrowRate", "type": "uint128" },
+                                        { "name": "lastUpdateTimestamp", "type": "uint40" },
+                                        { "name": "id", "type": "uint16" },
+                                        { "name": "aTokenAddress", "type": "address" },
+                                        { "name": "stableDebtTokenAddress", "type": "address" },
+                                        { "name": "variableDebtTokenAddress", "type": "address" },
+                                        { "name": "interestRateStrategyAddress", "type": "address" },
+                                        { "name": "accruedToTreasury", "type": "uint128" },
+                                        { "name": "unbacked", "type": "uint128" },
+                                        { "name": "isolationModeTotalDebt", "type": "uint128" }
+                                    ],
+                                    "name": "data",
+                                    "type": "tuple"
+                                }],
+                            "stateMutability": "view",
+                            "type": "function"
+                        }],
+                    functionName: 'getReserveData',
+                    args: [getAddress(debtAsset)],
+                });
+                if (poolData && poolData.currentVariableBorrowRate) {
+                    return Number(poolData.currentVariableBorrowRate) / 1e27;
+                }
+                break;
             }
-        }
-        catch (e) {
-            console.warn(`[${this.getName()}] Failed both Aave rate methods for ${debtAsset} on ${this.chain}:`, e.message);
+            catch (e) {
+                attempts++;
+                if (attempts >= 3) {
+                    console.warn(`[${this.getName()}] Failed Aave rate after 3 attempts for ${debtAsset} on ${this.chain}:`, e.message);
+                    return null;
+                }
+                await new Promise(resolve => setTimeout(resolve, 500 * attempts));
+            }
         }
         return null;
     }

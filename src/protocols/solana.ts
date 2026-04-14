@@ -1,6 +1,6 @@
-import { ILoanRepository } from '../db/interface';
-import { ProtocolScanner, ScannerStatus } from '../utils/types';
-import { getAssetCategory, getAssetPath } from '../utils/assets';
+import { ILoanRepository } from '../db/interface.js';
+import { ProtocolScanner, ScannerStatus } from '../utils/types.js';
+import { getAssetCategory, getAssetPath } from '../utils/assets.js';
 import axios from 'axios';
 
 const KAMINO_API_URL = 'https://api.kamino.finance/v2/markets/main';

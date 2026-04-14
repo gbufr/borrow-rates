@@ -1,11 +1,12 @@
 {
   "name": "liquidax-app",
   "version": "1.0.0",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "scan": "tsx src/index.ts",
     "build": "tsc",
-    "start": "node dist/api.js",
+    "start": "NODE_ENV=production node dist/api.js",
     "dashboard": "tsx src/query.ts",
     "api": "tsx watch src/api.ts",
     "sync-rates": "tsx src/scripts/sync_rates.ts",

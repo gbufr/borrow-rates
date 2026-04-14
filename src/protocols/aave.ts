@@ -1,6 +1,6 @@
-import { getPublicClient, getLogsInChunks, getAddress } from '../utils/rpc';
-import { ILoanRepository, LoanPosition } from '../db/interface';
-import { ProtocolScanner, ScannerStatus } from '../utils/types';
+import { getPublicClient, getLogsInChunks, getAddress } from '../utils/rpc.js';
+import { ILoanRepository, LoanPosition } from '../db/interface.js';
+import { ProtocolScanner, ScannerStatus } from '../utils/types.js';
 import { parseAbiItem } from 'viem';
 import pLimit from 'p-limit';
 
@@ -230,7 +230,7 @@ export class AaveScanner implements ProtocolScanner {
               args: [reserveAddress],
             }) as any;
 
-            const { getAssetCategory, getAssetPath } = await import('../utils/assets');
+            const { getAssetCategory, getAssetPath } = await import('../utils/assets.js');
 
             await db.upsertRate({
               protocol: this.getName(),

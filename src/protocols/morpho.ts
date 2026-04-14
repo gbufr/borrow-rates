@@ -1,8 +1,8 @@
-import { getPublicClient } from '../utils/rpc';
-import { querySubgraph } from '../utils/subgraph';
-import { ILoanRepository, LoanPosition } from '../db/interface';
-import { ProtocolScanner, ScannerStatus } from '../utils/types';
-import { getAssetCategory, getAssetPath } from '../utils/assets';
+import { getPublicClient } from '../utils/rpc.js';
+import { querySubgraph } from '../utils/subgraph.js';
+import { ILoanRepository, LoanPosition } from '../db/interface.js';
+import { ProtocolScanner, ScannerStatus } from '../utils/types.js';
+import { getAssetCategory, getAssetPath } from '../utils/assets.js';
 import { parseAbiItem, formatUnits, erc20Abi } from 'viem';
 
 const MORPHO_BLUE_ADDRESS = '0xBBBBBbbBBb9cCEdAb539639EB74044813E659393';
@@ -139,18 +139,19 @@ export class MorphoScanner implements ProtocolScanner {
     }
   }
 
-  async getMarketRate(collateralAsset: string, debtAsset: string, marketId: string): Promise<number | null> {
+  async getMarketRate(collateralAsset: string, debtAsset: string, marketId?: string): Promise<number | null> {
+    if (!marketId) return null;
     try {
       const query = `
-        query GetMarketRate($id: String!, $chainId: Int!) {
-          market(id: $id, chainId: $chainId) {
+        query GetMarketRate($id: String!) {
+          market(id: $id) {
             state {
               borrowApy
             }
           }
         }
       `;
-      const data: any = await querySubgraph(MORPHO_API_URL, query, { id: marketId, chainId: this.chainId });
+      const data: any = await querySubgraph(MORPHO_API_URL, query, { id: marketId });
       if (data.market && data.market.state && data.market.state.borrowApy) {
         return Number(data.market.state.borrowApy);
       }

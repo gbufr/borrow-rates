@@ -1,6 +1,6 @@
-import { publicClient, getAddress } from './rpc';
+import { publicClient, getAddress } from './rpc.js';
 import { parseAbiItem } from 'viem';
-import { ILoanRepository } from '../db/interface';
+import { ILoanRepository } from '../db/interface.js';
 
 const ORACLES = {
   ETH: getAddress('0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419'),

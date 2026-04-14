@@ -152,6 +152,14 @@ export class PostgresAdapter {
     async getAllRates() {
         return await this.db.selectFrom('rates').selectAll().execute();
     }
+    async getOldestRates(limit) {
+        return await this.db
+            .selectFrom('rates')
+            .selectAll()
+            .orderBy('lastUpdateTimestamp', 'asc')
+            .limit(limit)
+            .execute();
+    }
     async deleteRatesForProtocol(protocol) {
         await this.db.deleteFrom('rates').where('protocol', '=', protocol).execute();
     }

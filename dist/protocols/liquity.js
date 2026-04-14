@@ -1,4 +1,4 @@
-import { publicClient, getLogsInChunks, getAddress } from '../utils/rpc';
+import { publicClient, getLogsInChunks, getAddress } from '../utils/rpc.js';
 import { parseAbiItem } from 'viem';
 const TROVE_MANAGER_ADDRESS = getAddress('0xA39739EFc46Aa59b77d71261b26CCEB3148ab3e4');
 const SORTED_TROVES_ADDRESS = getAddress('0x8FdD3fbFEb32b28fb73555518f8b361bCeA741A6');

@@ -1,6 +1,6 @@
 import { Kysely, SqliteDialect } from 'kysely';
 import Database from 'better-sqlite3';
-import { DatabaseSchema, ILoanRepository, LoanPosition, AssetPrice, MarketRate } from './interface';
+import { DatabaseSchema, ILoanRepository, LoanPosition, AssetPrice, MarketRate } from './interface.js';
 
 export class SQLiteAdapter implements ILoanRepository {
   private db: Kysely<DatabaseSchema>;

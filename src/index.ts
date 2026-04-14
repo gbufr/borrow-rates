@@ -1,13 +1,14 @@
-import { getDatabaseAdapter } from './db';
-import { MorphoScanner } from './protocols/morpho';
-import { AaveScanner } from './protocols/aave';
-import { LiquityScanner } from './protocols/liquity';
-import { LiquityV2Scanner } from './protocols/liquityV2';
-import { SkyScanner } from './protocols/sky';
-import { MakerScanner } from './protocols/maker';
-import { ProtocolScanner } from './utils/types';
-import { RiskService } from './utils/risk';
-import { syncAllRates } from './scripts/sync_rates';
+import { getDatabaseAdapter } from './db/index.js';
+import { MorphoScanner } from './protocols/morpho.js';
+import { AaveScanner } from './protocols/aave.js';
+import { LiquityScanner } from './protocols/liquity.js';
+import { LiquityV2Scanner } from './protocols/liquityV2.js';
+import { SkyScanner } from './protocols/sky.js';
+import { MakerScanner } from './protocols/maker.js';
+import { ProtocolScanner } from './utils/types.js';
+import { RiskService } from './utils/risk.js';
+import { syncAllRates } from './scripts/sync_rates.js';
+import { fileURLToPath } from 'url';
 
 async function main() {
   const db = await getDatabaseAdapter();
@@ -69,4 +70,6 @@ async function main() {
   await db.close();
 }
 
-main().catch(console.error);
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  main().catch(console.error);
+}

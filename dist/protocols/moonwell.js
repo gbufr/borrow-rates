@@ -1,5 +1,5 @@
-import { getPublicClient, getAddress } from '../utils/rpc';
-import { getAssetCategory, getAssetPath } from '../utils/assets';
+import { getPublicClient, getAddress } from '../utils/rpc.js';
+import { getAssetCategory, getAssetPath } from '../utils/assets.js';
 import { parseAbiItem } from 'viem';
 const COMPTROLLER_ADDRESS = '0xfBb21d0380beE3312B33c4353c8936a0F13EF26C';
 // Popular mTokens on Base
@@ -8,6 +8,7 @@ const M_TOKENS = {
     'mWETH': { address: getAddress('0x628ff693426583D9a7FB391E54366292F509D457'), underlying: 'WETH', symbol: 'WETH' },
     'mcbBTC': { address: getAddress('0xcB575382098675549887e2247164929D1302506B'), underlying: 'cbBTC', symbol: 'cbBTC' },
     'mUSDT': { address: getAddress('0x3865dfD4D2aCb8F0C601b69B8f5951dC55De9A0d'), underlying: 'USDT', symbol: 'USDT' },
+    'mLBTC': { address: getAddress('0x10ff57879482d83769c0378e937d573b9fc5d2ee'), underlying: 'LBTC', symbol: 'LBTC' },
 };
 export class MoonwellScanner {
     db;
@@ -81,7 +82,8 @@ export class MoonwellScanner {
                         collateralCategory: getAssetCategory('WETH'),
                         debtCategory: getAssetCategory(market.symbol),
                         collateralPath: getAssetPath('WETH'),
-                        debtPath: getAssetPath(market.symbol)
+                        debtPath: getAssetPath(market.symbol),
+                        rateType: 'floating'
                     });
                     console.log(`[Moonwell] Synced ${market.symbol}: ${(rate * 100).toFixed(2)}%`);
                 }

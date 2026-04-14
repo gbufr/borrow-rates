@@ -1,5 +1,5 @@
-import { publicClient, getLogsInChunks, getAddress } from '../utils/rpc';
-import { getAssetCategory, getAssetPath } from '../utils/assets';
+import { publicClient, getLogsInChunks, getAddress } from '../utils/rpc.js';
+import { getAssetCategory, getAssetPath } from '../utils/assets.js';
 import { parseAbiItem } from 'viem';
 const COLLATERAL_REGISTRY_ADDRESS = getAddress('0xd99de73b95236f69a559117ecd6f519af780f3f7');
 export class LiquityV2Scanner {
@@ -207,9 +207,12 @@ export class LiquityV2Scanner {
                         collateralCategory: getAssetCategory(symbol),
                         debtCategory: getAssetCategory('BOLD'),
                         collateralPath: getAssetPath(symbol),
-                        debtPath: getAssetPath('BOLD')
+                        debtPath: getAssetPath('BOLD'),
+                        rateType: 'fixed'
                     });
                     console.log(`[LIQUITY V2] Synced ${symbol}/BOLD: ${(rate * 100).toFixed(2)}%`);
+                    // Strict 1s delay
+                    await new Promise(resolve => setTimeout(resolve, 1000));
                 }
             }
         }

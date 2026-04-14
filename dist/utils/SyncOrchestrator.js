@@ -1,4 +1,4 @@
-import { publicClient } from './rpc';
+import { publicClient } from './rpc.js';
 import pLimit from 'p-limit';
 export class SyncOrchestrator {
     protocols;
