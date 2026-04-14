@@ -3,9 +3,12 @@
 .gitignore
 node_modules/
 frontend/
-# data/             <-- Commented out to allow seeding from bundle
+# data/ folder is required for initial seeding
+!data/
+!data/**
+
 *.log
 *.txt
 .env
-# Only need dist/ for production runtime, but Cloud Build needs src for tsc
-#!include .gitignore
+
+# node_modules and frontend are already handled above
