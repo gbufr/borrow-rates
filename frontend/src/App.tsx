@@ -41,7 +41,7 @@ function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const chains = ['All', 'Ethereum', 'Base', 'Arbitrum', 'Solana', 'Citrea'];
-  const protocols = ['All', 'Morpho Blue', 'Aave V3', 'Maker MCD', 'Sky', 'Liquity V1', 'Liquity V2', 'Moonwell', 'Kamino', 'Solend', 'Zentra (Citrea)'];
+  const protocols = ['All', 'Morpho Blue', 'Aave V3', 'Aave Horizon', 'Maker MCD', 'Sky', 'Liquity V1', 'Liquity V2', 'Moonwell', 'Kamino', 'Solend', 'Zentra (Citrea)'];
   const debtTokens = ['All', 'DAI', 'USDC', 'USDT', 'GHO', 'LUSD', 'USDS', 'BOLD', 'ctUSD'];
   const collateralAssets = ['All', 'WETH', 'WBTC', 'cbBTC', 'wstETH', 'weETH', 'LBTC', 'cBTC', 'WcBTC'];
 
@@ -50,7 +50,9 @@ function App() {
     'CeFi Rates': 'cefi',
     'Bitcoin': 'bitcoin',
     'RWAs': 'rwas',
-    'Protocols': 'protocols'
+    'Protocols': 'protocols',
+    'Insurance': 'insurance',
+    'Automation': 'automation'
   };
 
   const slugToTab: Record<string, string> = {
@@ -59,7 +61,9 @@ function App() {
     'bitcoin': 'Bitcoin',
     'rwas': 'RWAs',
     'rwa': 'RWAs',
-    'protocols': 'Protocols'
+    'protocols': 'Protocols',
+    'insurance': 'Insurance',
+    'automation': 'Automation'
   };
 
   const [activeTab, setActiveTab] = useState<string>(() => {
@@ -97,10 +101,12 @@ function App() {
       'CeFi Rates': 'CeFi Lending Rates | Coinbase, Binance, Nexo',
       'Bitcoin': 'Bitcoin Borrow Rates | Citrea, Babylon, Lombard',
       'RWAs': 'RWA Lending Rates | BlackRock BUIDL, Ondo, Superstate',
-      'Protocols': 'DeFi Protocol Discovery | High-Efficiency Engines'
+      'Protocols': 'DeFi Protocol Discovery | High-Efficiency Engines',
+      'Insurance': 'DeFi Insurance for Borrowers | Nexus Mutual, InsurAce',
+      'Automation': 'DeFi Automation for Borrowers | DeFi Saver, Instadapp'
     };
     const title = titles[activeTab] || 'Live Borrow Rates';
-    document.title = `${title} | borrow-rates.org`;
+    document.title = `${title} | borrowdesk.org`;
   }, [activeTab]);
 
   useEffect(() => {
@@ -242,13 +248,13 @@ function App() {
         </button>
         <img src="/logo.png" alt="Logo" className="brand-logo" />
         <div className="title-group">
-          <h1>borrow-rates.org</h1>
+          <h1>borrowdesk.org</h1>
           <p>Live Borrow Rates across various markets</p>
         </div>
       </header>
 
       <nav className="tab-nav">
-        {['DeFi Rates', 'CeFi Rates', 'Bitcoin', 'RWAs', 'Protocols'].map(t => (
+        {['DeFi Rates', 'CeFi Rates', 'Bitcoin', 'RWAs', 'Protocols', 'Insurance', 'Automation'].map(t => (
           <button
             key={t}
             className={`nav-btn ${activeTab === t ? 'active' : ''}`}
@@ -268,7 +274,7 @@ function App() {
             </button>
           </div>
           <nav className="sidebar-nav">
-            {['DeFi Rates', 'CeFi Rates', 'Bitcoin', 'RWAs', 'Protocols'].map(t => (
+            {['DeFi Rates', 'CeFi Rates', 'Bitcoin', 'RWAs', 'Protocols', 'Insurance', 'Automation'].map(t => (
               <button
                 key={t}
                 className={`sidebar-btn ${activeTab === t ? 'active' : ''}`}
@@ -384,7 +390,7 @@ function App() {
                     <td data-label="Access"><span className="badge" style={{ background: 'rgba(249, 115, 22, 0.1)', color: '#f97316', border: '1px solid #f97316', fontSize: '10px' }}>KYC Required</span></td>
                   </tr>
                   <tr>
-                    <td data-label="Protocol" style={{ fontWeight: 700 }}>Aave (Horizon)</td>
+                    <td data-label="Protocol" style={{ fontWeight: 700 }}>Aave Horizon</td>
                     <td data-label="RWA Collateral" style={{ fontWeight: 600 }}>
                       <a href="https://coinmarketcap.com/currencies/ondo-ousg/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-primary)', textDecoration: 'none' }}>Ondo OUSG</a>
                     </td>
@@ -523,19 +529,25 @@ function App() {
                           return matchesSearch && matchesProtocol && matchesChain && matchesCollateral && matchesDebt && matchesCategory && matchesRateType;
                         })
                         .sort((a, b) => {
-                          const categoryPriority: Record<string, number> = {
-                            'BTC': 1,
-                            'GOLD': 2,
-                            'ETH': 3,
-                            'OTHER': 4,
-                            'EUR': 5,
-                            'JPY': 6,
-                            'USD': 10,
+                          // Sort by Chain Priority
+                          const chainPriority: Record<string, number> = {
+                            'Ethereum': 1,
+                            'Base': 2,
+                            'Arbitrum': 3
                           };
-                          const pA = categoryPriority[a.collateralCategory] || 99;
-                          const pB = categoryPriority[b.collateralCategory] || 99;
+                          const pA = chainPriority[a.chain] || 99;
+                          const pB = chainPriority[b.chain] || 99;
                           if (pA !== pB) return pA - pB;
-                          return a.protocol.localeCompare(b.protocol);
+
+                          const chainOrder = (a.chain || '').localeCompare(b.chain || '');
+                          if (chainOrder !== 0) return chainOrder;
+                          
+                          // Sort by Protocol
+                          const protocolOrder = a.protocol.localeCompare(b.protocol);
+                          if (protocolOrder !== 0) return protocolOrder;
+                          
+                          // Sort by Collateral Symbol
+                          return a.collateralSymbol.localeCompare(b.collateralSymbol);
                         })
                         .map((r, i) => (
                         <tr key={i}>
@@ -831,6 +843,39 @@ function App() {
                     access: 'KYC Needed',
                     risks: 'Borrower default, lack of liquidation buffer',
                     chains: ['Ethereum']
+                  },
+                  {
+                    name: 'Aave Horizon',
+                    website: 'https://aave.com/horizon',
+                    uniqueness: 'Institutional RWA Bridge',
+                    highlights: 'A dedicated, licensed instance of Aave enabling institutions to borrow stablecoins against tokenized RWAs like U.S. Treasuries.',
+                    rateType: 'Dynamic (Algorithmic)',
+                    ltvRange: 'Up to 85%',
+                    access: 'Institutional',
+                    risks: 'RWA valuation latency, permissioned liquidity',
+                    chains: ['Ethereum']
+                  },
+                  {
+                    name: 'Hashnote',
+                    website: 'https://hashnote.com',
+                    uniqueness: 'USYC Yield Engine',
+                    highlights: 'Institutional-grade investment management providing short-term yield via USYC (tokenized T-Bills) and credit strategies.',
+                    rateType: 'Fixed / Floating',
+                    ltvRange: 'Up to 90%',
+                    access: 'Institutional',
+                    risks: 'Fund management risk, regulatory changes',
+                    chains: ['Ethereum', 'Base']
+                  },
+                  {
+                    name: 'TrueFi',
+                    website: 'https://truefi.io',
+                    uniqueness: 'Uncollateralized Credit',
+                    highlights: 'Onchain credit marketplace connecting lenders with institutional borrowers for under-collateralized loans.',
+                    rateType: 'Floating',
+                    ltvRange: 'N/A (Credit-based)',
+                    access: 'Institutional (Prime)',
+                    risks: 'Borrower default, lack of liquid collateral',
+                    chains: ['Ethereum', 'Optimism']
                   }
                 ].map(p => (
                   <tr key={p.name}>
@@ -871,6 +916,244 @@ function App() {
                 ))}
               </tbody>
             </table>
+          </div>
+        </main>
+      )}
+      {activeTab === 'Insurance' && (
+        <main className="section-content" style={{ animation: 'fadeIn 0.4s ease-out' }}>
+          <div className="discovery-header" style={{ marginBottom: '2rem', textAlign: 'center' }}>
+            <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>DeFi Insurance for Borrowers</h2>
+            <p style={{ color: 'var(--text-secondary)' }}>Protect your collateral and positions against on-chain risks</p>
+          </div>
+          <div className="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Provider</th>
+                  <th>Coverage Types</th>
+                  <th>Key Features</th>
+                  <th>Access Type</th>
+                  <th>Risk Model</th>
+                  <th>Chains Supported</th>
+                  <th>Website</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  {
+                    name: 'Nexus Mutual',
+                    website: 'https://nexusmutual.io',
+                    types: 'Protocol, De-peg, ETH Staking',
+                    features: 'Discretionary mutual, community-governed claims, broad protocol coverage.',
+                    access: 'Member-based (KYC)',
+                    riskModel: 'Staking-based pool',
+                    chains: ['Ethereum', 'Multi-chain']
+                  },
+                  {
+                    name: 'InsurAce',
+                    website: 'https://insurace.io',
+                    types: 'Smart Contract, De-peg, IDO',
+                    features: 'Portfolio-based covers, high capital efficiency, 0 membership fees.',
+                    access: 'Permissionless',
+                    riskModel: 'Multi-chain liquidity',
+                    chains: ['Ethereum', 'Base', 'BSC', 'Polygon', 'L2s']
+                  },
+                  {
+                    name: 'Etherisc',
+                    website: 'https://etherisc.com',
+                    types: 'USDC De-peg, Flight Delay',
+                    features: 'Parametric (automated) payouts, chainlink oracle driven.',
+                    access: 'Permissionless',
+                    riskModel: 'Parametric / Algorithmic',
+                    chains: ['Ethereum', 'Gnosis']
+                  },
+                  {
+                    name: 'Risk Harbor',
+                    website: 'https://riskharbor.com',
+                    types: 'Smart Contract, De-peg',
+                    features: 'Algorithmic risk management, automated claims settlement.',
+                    access: 'Permissionless',
+                    riskModel: 'Transparent, code-driven',
+                    chains: ['Ethereum', 'Arbitrum', 'Optimism']
+                  },
+                  {
+                    name: 'Bridge Mutual',
+                    website: 'https://bridgemutual.io',
+                    types: 'Protocol, De-peg, CEX',
+                    features: 'Peer-to-peer coverage marketplace, discretionary claims.',
+                    access: 'Permissionless',
+                    riskModel: 'User-pledged capital',
+                    chains: ['Ethereum', 'Polygon']
+                  }
+                ].map(p => (
+                  <tr key={p.name}>
+                    <td data-label="Provider" style={{ fontWeight: 700 }}>{p.name}</td>
+                    <td data-label="Coverage Types" style={{ fontSize: '0.9rem', fontWeight: 600 }}>{p.types}</td>
+                    <td data-label="Key Features" style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>{p.features}</td>
+                    <td data-label="Access Type">
+                        <span style={{ 
+                        color: p.access === 'Permissionless' ? '#4ade80' : '#fbbf24',
+                        background: p.access === 'Permissionless' ? 'rgba(74, 222, 128, 0.1)' : 'rgba(251, 191, 36, 0.1)',
+                        padding: '0.2rem 0.5rem',
+                        borderRadius: '4px',
+                        fontWeight: 600,
+                        fontSize: '0.8rem'
+                      }}>
+                        {p.access}
+                      </span>
+                    </td>
+                    <td data-label="Risk Model" style={{ fontSize: '0.85rem' }}>{p.riskModel}</td>
+                    <td data-label="Chains Supported">
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
+                        {p.chains.map(c => (
+                          <span key={c} style={{ fontSize: '10px', padding: '2px 6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)' }}>{c}</span>
+                        ))}
+                      </div>
+                    </td>
+                    <td data-label="Website">
+                      <a href={p.website} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.85rem', color: 'var(--accent-primary)', textDecoration: 'none' }}>
+                        {p.website.replace('https://', '')} ↗
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(34, 211, 238, 0.05)', borderRadius: '1rem', border: '1px solid rgba(34, 211, 238, 0.2)' }}>
+            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem', color: 'var(--accent-primary)' }}>Why Borrowers Need Insurance</h3>
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+              On-chain borrowing carries unique risks beyond market volatility. Smart contract exploits can result in loss of collateral, 
+              while stablecoin de-pegging can trigger unwanted liquidations. Insurance protocols allow you to hedge these technical and 
+              systemic risks for a small premium, ensuring your capital remains protected even if a protocol fails.
+            </p>
+          </div>
+        </main>
+      )}
+      {activeTab === 'Automation' && (
+        <main className="section-content" style={{ animation: 'fadeIn 0.4s ease-out' }}>
+          <div className="discovery-header" style={{ marginBottom: '2rem', textAlign: 'center' }}>
+            <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Borrowing Automation & Wallets</h2>
+            <p style={{ color: 'var(--text-secondary)' }}>Advanced tools for rebalancing debt, protecting collateral, and managing leverage</p>
+          </div>
+          <div className="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Provider</th>
+                  <th>Core Automation Features</th>
+                  <th>Managed Protocols</th>
+                  <th>Access Type</th>
+                  <th>Key Benefits</th>
+                  <th>Chains Supported</th>
+                  <th>Website</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  {
+                    name: 'DeFi Saver',
+                    website: 'https://defisaver.com',
+                    features: 'Automation (Boost/Repay), Stop Loss, Trailing Stop, Flash-loan Rebalancing',
+                    protocols: ['Aave', 'Maker', 'Morpho', 'Liquity', 'Compound'],
+                    access: 'Permissionless',
+                    benefits: 'Advanced liquidation protection & algorithmic leverage management.',
+                    chains: ['Ethereum', 'Arbitrum', 'Optimism', 'Base']
+                  },
+                  {
+                    name: 'Instadapp (Lite/Avocado)',
+                    website: 'https://instadapp.io',
+                    features: 'Leverage management, Debt refinancing, Avocado Smart Wallet integration.',
+                    protocols: ['Aave', 'Morpho Blue', 'Maker', 'Fluid'],
+                    access: 'Permissionless',
+                    benefits: 'Seamless asset migration and cross-chain execution via Avocado.',
+                    chains: ['Ethereum', 'Polygn', 'Arbitrum', 'Optimism', 'Base']
+                  },
+                  {
+                    name: 'Summer.fi',
+                    website: 'https://summer.fi',
+                    features: 'Stop Loss, Take Profit, Constant Multiple, Trailing Stop.',
+                    protocols: ['Maker', 'Aave', 'Morpho Blue'],
+                    access: 'Permissionless',
+                    benefits: 'Institutional-grade automation with a focus on ease of use for retail.',
+                    chains: ['Ethereum', 'Arbitrum', 'Optimism']
+                  },
+                  {
+                    name: 'B.Protocol',
+                    website: 'https://bprotocol.org',
+                    features: 'Backstop liquidity, Liquidation protection, B.Vaults.',
+                    protocols: ['Liquity', 'Morpho Blue', 'Aave'],
+                    access: 'Permissionless',
+                    benefits: 'Passive liquidation protection and shared stability pool yield.',
+                    chains: ['Ethereum', 'Base', 'ZkSync']
+                  },
+                  {
+                    name: 'Brahma',
+                    website: 'https://brahma.fi',
+                    features: 'Institutional risk management, delegated execution, yield optimization.',
+                    protocols: ['Aave', 'Morpho', 'Pendle'],
+                    access: 'Institutional (Prime)',
+                    benefits: 'Compliant and secure automation for high-net-worth and institutions.',
+                    chains: ['Ethereum', 'Arbitrum', 'Base']
+                  },
+                  {
+                    name: 'Enso',
+                    website: 'https://enso.finance',
+                    features: 'Unified interaction layer, rebalancing, bundling/batching.',
+                    protocols: ['All Major Protocols'],
+                    access: 'Permissionless',
+                    benefits: 'Low-cost bundling of complex transactions and easy rebalancing.',
+                    chains: ['Ethereum', 'Base', 'L2s']
+                  }
+                ].map(p => (
+                  <tr key={p.name}>
+                    <td data-label="Provider" style={{ fontWeight: 700 }}>{p.name}</td>
+                    <td data-label="Automation" style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--accent-primary)' }}>{p.features}</td>
+                    <td data-label="Managed Protocols">
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
+                        {p.protocols.map(prot => (
+                          <span key={prot} style={{ fontSize: '10px', padding: '2px 6px', background: 'rgba(34, 211, 238, 0.1)', borderRadius: '4px' }}>{prot}</span>
+                        ))}
+                      </div>
+                    </td>
+                    <td data-label="Access Type">
+                        <span style={{ 
+                        color: p.access === 'Permissionless' ? '#4ade80' : '#fbbf24',
+                        background: p.access === 'Permissionless' ? 'rgba(74, 222, 128, 0.1)' : 'rgba(251, 191, 36, 0.1)',
+                        padding: '0.2rem 0.5rem',
+                        borderRadius: '4px',
+                        fontWeight: 600,
+                        fontSize: '0.8rem'
+                      }}>
+                        {p.access}
+                      </span>
+                    </td>
+                    <td data-label="Key Benefits" style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>{p.benefits}</td>
+                    <td data-label="Chains Supported">
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
+                        {p.chains.map(c => (
+                          <span key={c} style={{ fontSize: '10px', padding: '2px 6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.1)' }}>{c}</span>
+                        ))}
+                      </div>
+                    </td>
+                    <td data-label="Website">
+                      <a href={p.website} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.85rem', color: 'var(--accent-primary)', textDecoration: 'none' }}>
+                        {p.website.replace('https://', '')} ↗
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(96, 165, 250, 0.05)', borderRadius: '1rem', border: '1px solid rgba(96, 165, 250, 0.2)' }}>
+            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.75rem', color: '#60a5fa' }}>Professional Debt Management</h3>
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+              Automation tools allow borrowers to sleep easier by monitoring their Health Factor 24/7. 
+              Features like "Boost" and "Repay" automatically adjust your position to maintain a target LTV, 
+              preventing liquidation during flash crashes or optimizing capital efficiency when markets rise. 
+              Smart wallets like Instadapp's Avocado further simplify cross-chain debt management by unifying liquidity.
+            </p>
           </div>
         </main>
       )}
