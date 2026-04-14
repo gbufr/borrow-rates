@@ -135,23 +135,29 @@ async function start() {
   
   await riskService.syncPricesFromDb();
 
-  // Background Rate Sync (every 1 hour)
-  setInterval(async () => {
-    console.log('[API] Starting background interest rate sync...');
-    try {
-      await syncAllRates(db);
-      if (process.env.NODE_ENV === 'production') {
-        await GCSStorage.backup();
+  // Background Sync Loop (1 hour interval)
+  const runBackgroundSync = async () => {
+    while (true) {
+      console.log('[API] Starting background interest rate sync...');
+      try {
+        await syncAllRates(db);
+        if (process.env.NODE_ENV === 'production') {
+          await GCSStorage.backup();
+        }
+        console.log('[API] Background interest rate sync completed.');
+      } catch (e) {
+        console.error('[API] Background interest rate sync failed:', e);
       }
-      console.log('[API] Background interest rate sync completed.');
-    } catch (e) {
-      console.error('[API] Background interest rate sync failed:', e);
+
+      console.log('[API] Waiting 1 hour for next sync cycle...');
+      await new Promise(resolve => setTimeout(resolve, 60 * 60 * 1000));
     }
-  }, 60 * 60 * 1000);
+  };
 
-  // Initial sync on startup
-  syncAllRates(db).catch((e: Error) => console.error('[API] Initial rate sync failed:', e.message));
+  // Start the background sync loop (Don't await, let it run in background)
+  runBackgroundSync().catch(e => console.error('[API] Fatal error in sync loop:', e));
 
+  // Sync prices from DB every 1 second (fast local check)
   setInterval(async () => {
     try {
       await riskService.syncPricesFromDb();
@@ -160,7 +166,7 @@ async function start() {
     }
   }, 1000);
 
-  // Periodic GCS pull (every 30 minutes) to keep up with background sync
+  // Periodic GCS pull (every 1 hour) to keep up with background sync
   if (process.env.NODE_ENV === 'production') {
     setInterval(async () => {
       console.log('[API] Checking for database updates in GCS...');
@@ -169,7 +175,7 @@ async function start() {
       } catch (e) {
         console.error('[API] Failed to pull database from GCS:', e);
       }
-    }, 30 * 60 * 1000);
+    }, 60 * 60 * 1000);
   }
 
   app.listen(port, () => {

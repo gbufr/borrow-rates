@@ -76,7 +76,6 @@ export class RiskService {
     for (const p of prices) {
       this.priceCache[p.symbol] = p.price;
     }
-    console.log(`Synced ${prices.length} prices from database.`);
   }
 
   calculateHealthFactor(position: any): number {

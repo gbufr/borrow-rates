@@ -20,7 +20,8 @@ export class SyncOrchestrator {
   constructor(config: SyncConfig) {
     this.protocols = config.protocols;
     this.db = config.db;
-    this.pollIntervalMs = config.pollIntervalMs;
+    // Safety check: Ensure pollIntervalMs is at least 30 seconds to prevent rapid looping
+    this.pollIntervalMs = Math.max(config.pollIntervalMs, 30 * 1000);
     this.limit = pLimit(config.concurrencyLimit);
   }
 
