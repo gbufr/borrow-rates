@@ -1,8 +1,19 @@
+import path from 'path';
+import fs from 'fs';
 import { Kysely, SqliteDialect } from 'kysely';
 import Database from 'better-sqlite3';
 export class SQLiteAdapter {
     db;
     constructor(dbPath) {
+        const dir = path.dirname(dbPath);
+        if (!fs.existsSync(dir)) {
+            try {
+                fs.mkdirSync(dir, { recursive: true });
+            }
+            catch (e) {
+                console.warn(`Could not create directory ${dir}:`, e);
+            }
+        }
         const dialect = new SqliteDialect({
             database: new Database(dbPath),
         });

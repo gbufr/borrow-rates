@@ -4,7 +4,8 @@ import fs from 'fs';
 
 const storage = new Storage();
 const bucketName = process.env.GCS_BUCKET_NAME || 'liquidax-db-backups';
-const dbPath = process.env.SQLITE_DB_PATH || 'data/loan_scanner.db';
+const defaultDbPath = process.env.NODE_ENV === 'production' ? '/tmp/loan_scanner.db' : 'data/loan_scanner.db';
+const dbPath = process.env.SQLITE_DB_PATH || defaultDbPath;
 
 export class GCSStorage {
   static async backup() {
@@ -29,7 +30,11 @@ export class GCSStorage {
     try {
       const destDir = path.dirname(dbPath);
       if (!fs.existsSync(destDir)) {
-        fs.mkdirSync(destDir, { recursive: true });
+        try {
+          fs.mkdirSync(destDir, { recursive: true });
+        } catch (e) {
+          console.warn(`[GCS] Could not create directory ${destDir}:`, e);
+        }
       }
 
       await storage.bucket(bucketName).file('loan_scanner.db').download({

@@ -9,6 +9,5 @@ data/
 *.log
 *.txt
 .env
-src/
-# Only need dist/ for production runtime
+# Only need dist/ for production runtime, but Cloud Build needs src for tsc
 #!include .gitignore

@@ -5,6 +5,7 @@ entrypoint: npm start
 env_variables:
   NODE_ENV: "production"
   GCS_BUCKET_NAME: "borrowdesk-db"
+  SQLITE_DB_PATH: "/tmp/loan_scanner.db"
   # DATABASE_URL: "postgresql://user:pass@/dbname?host=/cloudsql/project:region:instance"
   ALCHEMY_API_KEY: "2scV0IeBl87hIlZet0UIlUayxWAjeZD6"
 

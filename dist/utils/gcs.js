@@ -26,7 +26,12 @@ export class GCSStorage {
         try {
             const destDir = path.dirname(dbPath);
             if (!fs.existsSync(destDir)) {
-                fs.mkdirSync(destDir, { recursive: true });
+                try {
+                    fs.mkdirSync(destDir, { recursive: true });
+                }
+                catch (e) {
+                    console.warn(`[GCS] Could not create directory ${destDir}:`, e);
+                }
             }
             await storage.bucket(bucketName).file('loan_scanner.db').download({
                 destination: dbPath,

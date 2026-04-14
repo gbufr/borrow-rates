@@ -3,8 +3,8 @@ import { ProtocolScanner, ScannerStatus } from '../utils/types.js';
 import { getAssetCategory, getAssetPath } from '../utils/assets.js';
 import axios from 'axios';
 
-const KAMINO_API_URL = 'https://api.kamino.finance/v2/markets/main';
-const SOLEND_API_URL = 'https://api.solend.fi/v2/markets/results?ids=main';
+const KAMINO_API_URL = 'https://api.kamino.finance/v1/markets/main';
+const SOLEND_API_URL = 'https://api.solend.fi/v1/markets/results?ids=main';
 
 export class SolanaScanner implements ProtocolScanner {
   private status: ScannerStatus = {
