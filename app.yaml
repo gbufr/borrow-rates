@@ -8,6 +8,7 @@ env_variables:
   SQLITE_DB_PATH: "/tmp/loan_scanner.db"
   # DATABASE_URL: "postgresql://user:pass@/dbname?host=/cloudsql/project:region:instance"
   ALCHEMY_API_KEY: "2scV0IeBl87hIlZet0UIlUayxWAjeZD6"
+  RPC_URL: "https://eth-mainnet.g.alchemy.com/v2/2scV0IeBl87hIlZet0UIlUayxWAjeZD6"
 
 # Increase scaling for sync script background execution if needed
 automatic_scaling:

@@ -131,7 +131,7 @@ async function start() {
         catch (e) {
             console.error('Failed to sync prices in background:', e);
         }
-    }, 60000);
+    }, 1000);
     // Periodic GCS pull (every 30 minutes) to keep up with background sync
     if (process.env.NODE_ENV === 'production') {
         setInterval(async () => {
