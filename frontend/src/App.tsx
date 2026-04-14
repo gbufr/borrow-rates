@@ -331,6 +331,30 @@ function App() {
                     <td data-label="Liquidation">90%</td>
                   </tr>
                   <tr>
+                    <td data-label="Platform" style={{ fontWeight: 700 }}>Kraken (Flexline)</td>
+                    <td data-label="Collateral">BTC (Native)</td>
+                    <td data-label="Debt">Fiat/USDT</td>
+                    <td data-label="Rate (APR)" style={{ color: 'var(--text-primary)', fontWeight: 700 }}>10% - 25%</td>
+                    <td data-label="Max LTV">50%</td>
+                    <td data-label="Liquidation">80%</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Platform" style={{ fontWeight: 700 }}>Ledn</td>
+                    <td data-label="Collateral">BTC (Native)</td>
+                    <td data-label="Debt">USDC</td>
+                    <td data-label="Rate (APR)" style={{ color: 'var(--text-primary)', fontWeight: 700 }}>~8.5% - 12%</td>
+                    <td data-label="Max LTV">50%</td>
+                    <td data-label="Liquidation">70%</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Platform" style={{ fontWeight: 700 }}>Nebeus</td>
+                    <td data-label="Collateral">BTC/Stablecoins</td>
+                    <td data-label="Debt">EUR/GBP</td>
+                    <td data-label="Rate (APR)" style={{ color: 'var(--text-primary)', fontWeight: 700 }}>~8.0%</td>
+                    <td data-label="Max LTV">80%</td>
+                    <td data-label="Liquidation">90%</td>
+                  </tr>
+                  <tr>
                     <td data-label="Platform" style={{ fontWeight: 700 }}>Crypto.com</td>
                     <td data-label="Collateral">BTC (Native)</td>
                     <td data-label="Debt">USDC</td>
