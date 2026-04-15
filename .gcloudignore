@@ -3,6 +3,9 @@
 .gitignore
 node_modules/
 frontend/
+dist/
+*.db
+*.sqlite
 # data/ folder is required for initial seeding
 !data/
 !data/**

@@ -7,3 +7,4 @@ app.yaml
 data/
 sync_output.txt
 seed_output.log
+dist/
