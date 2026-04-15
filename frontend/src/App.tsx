@@ -6,6 +6,7 @@ import {
   Menu
 } from 'lucide-react';
 import './index.css';
+import { formatRelativeTime } from './utils/time';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
 
@@ -66,6 +67,13 @@ function App() {
     return 'Rates';
   });
   const [expandedBridge, setExpandedBridge] = useState<string | null>(null);
+  const [tick, setTick] = useState(0);
+
+  // Re-render every minute to update "ago" timestamps
+  useEffect(() => {
+    const timer = setInterval(() => setTick(t => t + 1), 60000);
+    return () => clearInterval(timer);
+  }, []);
 
   const chains = ['All', 'Ethereum', 'Base', 'Arbitrum', 'Solana', 'Citrea'];
   const protocols = ['All', 'Morpho Blue', 'Aave V3', 'Aave Horizon', 'Maker MCD', 'Sky', 'Liquity V1', 'Liquity V2', 'Moonwell', 'Kamino', 'Solend', 'Zentra (Citrea)'];
@@ -673,9 +681,12 @@ function App() {
                               </span>
                             </td>
                             <td data-label="Updated">
-                              <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
-                                {Math.floor((Date.now() / 1000 - r.lastUpdateTimestamp) / 60)}m ago
-                              </span>
+                              <div data-tick={tick} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                                <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'var(--risk-low)', boxShadow: '0 0 5px var(--risk-low)' }} />
+                                <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 500 }}>
+                                  {formatRelativeTime(r.lastUpdateTimestamp)}
+                                </span>
+                              </div>
                             </td>
                           </tr>
                         ))}
