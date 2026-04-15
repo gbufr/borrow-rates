@@ -22,6 +22,9 @@ export function getAssetCategory(symbol: string): string {
   if (s === 'SOL' || s.includes('SOL')) {
     return 'SOL';
   }
+  if (s === 'PRIME' || s === 'ONYC' || s === 'SYRUPUSDC' || s === 'USCC' || s === 'PST' || s === 'EUSX') {
+    return 'RWA';
+  }
   
   return 'OTHER';
 }
@@ -44,6 +47,12 @@ export function getAssetPath(symbol: string): string | null {
     'STUSDS': 'USDS ➔ stUSDS',
     'WETH': 'ETH ➔ WETH',
     'MKGLD': 'GOLD ➔ KGLD ➔ mKGLD',
+    'PRIME': 'Real Estate ➔ Figure ➔ PRIME',
+    'ONYC': 'Insurance ➔ OnRe ➔ ONyc',
+    'SYRUPUSDC': 'Institutional Credit ➔ Maple ➔ syrupUSDC',
+    'USCC': 'T-Bills/Credit ➔ Superstate ➔ USCC',
+    'PST': 'Receivables ➔ Huma ➔ PST',
+    'EUSX': 'T-Bills ➔ Mountain ➔ eUSX',
   };
   
   return paths[s] || null;
