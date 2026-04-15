@@ -78,7 +78,7 @@ function App() {
   const chains = ['All', 'Ethereum', 'Base', 'Arbitrum', 'Solana', 'Citrea'];
   const protocols = ['All', 'Morpho Blue', 'Aave V3', 'Aave Horizon', 'Maker MCD', 'Sky', 'Liquity V1', 'Liquity V2', 'Moonwell', 'Kamino', 'Solend', 'Zentra (Citrea)'];
   const debtTokens = ['All', 'DAI', 'USDC', 'USDT', 'GHO', 'LUSD', 'USDS', 'BOLD', 'ctUSD'];
-  const collateralAssets = ['All', 'WETH', 'WBTC', 'cbBTC', 'wstETH', 'weETH', 'LBTC', 'cBTC', 'WcBTC'];
+  const collateralAssets = ['All', 'WETH', 'WBTC', 'cbBTC', 'wstETH', 'weETH', 'LBTC', 'cBTC', 'WcBTC', 'PRIME', 'ONYC', 'syrupUSDC', 'USCC', 'PST', 'eUSX'];
 
   const tabToSlug: Record<string, string> = {
     'DeFi Rates': 'defi',
@@ -229,7 +229,12 @@ function App() {
       'rUSD': 'rusd',
       'siUSD': 'siusd',
       'apyUSD': 'apyusd',
-      'apxUSD': 'apx-usd'
+      'apxUSD': 'apx-usd',
+      'PRIME': 'prime',
+      'ONYC': 'onyc',
+      'USCC': 'uscc',
+      'PST': 'pst',
+      'eUSX': 'mountain-protocol-usda'
     };
     const slug = slugs[symbol] || symbol.toLowerCase();
     return `https://coinmarketcap.com/currencies/${slug}/`;
@@ -456,48 +461,46 @@ function App() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
+                  {rates.filter(r => r.isRWA).map((r, i) => (
+                    <tr key={i}>
+                      <td data-label="Protocol" style={{ fontWeight: 700 }}>{r.protocol.replace(' (Solana)', '')}</td>
+                      <td data-label="RWA Collateral" style={{ fontWeight: 600 }}>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          <a href={getCMCLink(r.collateralSymbol)} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-primary)', textDecoration: 'none' }}>
+                            {r.collateralSymbol}
+                          </a>
+                          {r.collateralPath && <span style={{ fontSize: '10px', color: 'var(--text-secondary)', opacity: 0.8 }}>{r.collateralPath}</span>}
+                        </div>
+                      </td>
+                      <td data-label="Debt Asset">{r.debtSymbol}</td>
+                      <td data-label="Borrow Rate" style={{ color: 'var(--text-primary)', fontWeight: 700 }}>{formatPercent(r.rate)}</td>
+                      <td data-label="Max LTV">{r.ltv ? (r.ltv * 100).toFixed(1) + '%' : '—'}</td>
+                      <td data-label="Liq. Threshold">{r.liquidationThreshold ? (r.liquidationThreshold * 100).toFixed(1) + '%' : '—'}</td>
+                      <td data-label="Access">
+                        <span className="badge" style={{ 
+                          background: r.protocol.includes('Kamino') ? 'rgba(52, 211, 153, 0.1)' : 'rgba(249, 115, 22, 0.1)', 
+                          color: r.protocol.includes('Kamino') ? '#34d399' : '#f97316', 
+                          border: `1px solid ${r.protocol.includes('Kamino') ? '#34d399' : '#f97316'}`, 
+                          fontSize: '10px' 
+                        }}>
+                          {r.protocol.includes('Kamino') ? 'Permissionless' : 'KYC Required'}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                  {rates.filter(r => r.isRWA).length === 0 && (
+                    <tr>
+                      <td colSpan={7} style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)' }}>No live RWA data available. Synchronizing...</td>
+                    </tr>
+                  )}
+                  {/* Standard high-quality placeholders for non-synced assets */}
+                  <tr style={{ opacity: 0.6 }}>
                     <td data-label="Protocol" style={{ fontWeight: 700 }}>Morpho</td>
-                    <td data-label="RWA Collateral" style={{ fontWeight: 600 }}>
-                      <a href="https://www.blackrock.com/us/individual/products/335207/blackrock-usd-institutional-digital-liquidity-fund" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-primary)', textDecoration: 'none' }}>BUIDL (BlackRock)</a>
-                    </td>
+                    <td data-label="RWA Collateral" style={{ fontWeight: 600 }}>BUIDL (BlackRock)</td>
                     <td data-label="Debt Asset">USDC</td>
-                    <td data-label="Borrow Rate" style={{ color: 'var(--text-primary)', fontWeight: 700 }}>~5.20%</td>
+                    <td data-label="Borrow Rate">~5.20%</td>
                     <td data-label="Max LTV">80%</td>
                     <td data-label="Liq. Threshold">86%</td>
-                    <td data-label="Access"><span className="badge" style={{ background: 'rgba(249, 115, 22, 0.1)', color: '#f97316', border: '1px solid #f97316', fontSize: '10px' }}>KYC Required</span></td>
-                  </tr>
-                  <tr>
-                    <td data-label="Protocol" style={{ fontWeight: 700 }}>Aave Horizon</td>
-                    <td data-label="RWA Collateral" style={{ fontWeight: 600 }}>
-                      <a href="https://coinmarketcap.com/currencies/ondo-ousg/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-primary)', textDecoration: 'none' }}>Ondo OUSG</a>
-                    </td>
-                    <td data-label="Debt Asset">GHO</td>
-                    <td data-label="Borrow Rate" style={{ color: 'var(--text-primary)', fontWeight: 700 }}>~5.50%</td>
-                    <td data-label="Max LTV">85%</td>
-                    <td data-label="Liq. Threshold">90%</td>
-                    <td data-label="Access"><span className="badge" style={{ background: 'rgba(236, 72, 153, 0.1)', color: '#ec4899', border: '1px solid #ec4899', fontSize: '10px' }}>Institutional</span></td>
-                  </tr>
-                  <tr>
-                    <td data-label="Protocol" style={{ fontWeight: 700 }}>Flux Finance</td>
-                    <td data-label="RWA Collateral" style={{ fontWeight: 600 }}>
-                      <a href="https://coinmarketcap.com/currencies/ondo-usdy/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-primary)', textDecoration: 'none' }}>Ondo USDY</a>
-                    </td>
-                    <td data-label="Debt Asset">fUSDC</td>
-                    <td data-label="Borrow Rate" style={{ color: 'var(--text-primary)', fontWeight: 700 }}>~5.85%</td>
-                    <td data-label="Max LTV">85%</td>
-                    <td data-label="Liq. Threshold">92%</td>
-                    <td data-label="Access"><span className="badge" style={{ background: 'rgba(52, 211, 153, 0.1)', color: '#34d399', border: '1px solid #34d399', fontSize: '10px' }}>Permissionless</span></td>
-                  </tr>
-                  <tr>
-                    <td data-label="Protocol" style={{ fontWeight: 700 }}>Morpho</td>
-                    <td data-label="RWA Collateral" style={{ fontWeight: 600 }}>
-                      <a href="https://superstate.co/ustb" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-primary)', textDecoration: 'none' }}>Superstate USTB</a>
-                    </td>
-                    <td data-label="Debt Asset">USDC</td>
-                    <td data-label="Borrow Rate" style={{ color: 'var(--text-primary)', fontWeight: 700 }}>~5.15%</td>
-                    <td data-label="Max LTV">90%</td>
-                    <td data-label="Liq. Threshold">94.5%</td>
                     <td data-label="Access"><span className="badge" style={{ background: 'rgba(249, 115, 22, 0.1)', color: '#f97316', border: '1px solid #f97316', fontSize: '10px' }}>KYC Required</span></td>
                   </tr>
                 </tbody>
