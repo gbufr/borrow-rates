@@ -99,7 +99,7 @@ async function syncAllRates(passedDb?: ILoanRepository) {
     
     // Use UTC for all time calculations
     const nowUtc = Math.floor(Date.now() / 1000);
-    const STALE_THRESHOLD_SECONDS = 30 * 60; // 30 minutes
+    const STALE_THRESHOLD_SECONDS = 24 * 60 * 60; // 24 hours
 
     if (gcsUpdatedTime && gcsUpdatedTime > localLastSync) {
       console.log(`[SYNC] GCS file is newer (${new Date(gcsUpdatedTime).toISOString()} > ${new Date(localLastSync).toISOString()}). Downloading...`);

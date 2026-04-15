@@ -123,8 +123,8 @@ async function start() {
             catch (e) {
                 console.error('[API] Background interest rate sync failed:', e);
             }
-            console.log('[API] Waiting 1 hour for next sync cycle...');
-            await new Promise(resolve => setTimeout(resolve, 60 * 60 * 1000));
+            console.log('[API] Waiting 24 hours for next sync cycle...');
+            await new Promise(resolve => setTimeout(resolve, 24 * 60 * 60 * 1000));
         }
     };
     // Start the background sync loop (Don't await, let it run in background)
@@ -148,7 +148,7 @@ async function start() {
             catch (e) {
                 console.error('[API] Failed to pull database from GCS:', e);
             }
-        }, 60 * 60 * 1000);
+        }, 24 * 60 * 60 * 1000);
     }
     app.listen(port, () => {
         console.log(`API Server running at http://localhost:${port}`);
