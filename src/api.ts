@@ -135,9 +135,26 @@ async function start() {
   
   await riskService.syncPricesFromDb();
 
-  // Background Sync Loop (1 hour interval)
+  // Background Sync Loop (24 hour interval)
   const runBackgroundSync = async () => {
+    const SYNC_INTERVAL_MS = 24 * 60 * 60 * 1000;
+    let isFirstCycle = true;
+
     while (true) {
+      if (isFirstCycle) {
+        const latestRateTime = await db.getLatestRateTimestamp();
+        const now = Math.floor(Date.now() / 1000);
+        const timeSinceLastSync = now - latestRateTime;
+        const waitTimeMs = Math.max(0, SYNC_INTERVAL_MS - (timeSinceLastSync * 1000));
+
+        if (waitTimeMs > 0) {
+          const waitHours = (waitTimeMs / (1000 * 60 * 60)).toFixed(1);
+          console.log(`[API] Last sync was ${ (timeSinceLastSync / 3600).toFixed(1) }h ago. Next sync due in ${waitHours}h. Initial wait...`);
+          await new Promise(resolve => setTimeout(resolve, waitTimeMs));
+        }
+        isFirstCycle = false;
+      }
+
       console.log('[API] Starting background interest rate sync...');
       try {
         await syncAllRates(db);
@@ -149,8 +166,8 @@ async function start() {
         console.error('[API] Background interest rate sync failed:', e);
       }
 
-      console.log('[API] Waiting 24 hours for next sync cycle...');
-      await new Promise(resolve => setTimeout(resolve, 24 * 60 * 60 * 1000));
+      console.log(`[API] Waiting ${SYNC_INTERVAL_MS / (1000 * 60 * 60)} hours for next sync cycle...`);
+      await new Promise(resolve => setTimeout(resolve, SYNC_INTERVAL_MS));
     }
   };
 
