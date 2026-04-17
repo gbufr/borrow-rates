@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import { Kysely, SqliteDialect } from 'kysely';
 import Database from 'better-sqlite3';
-import { DatabaseSchema, ILoanRepository, LoanPosition, AssetPrice, MarketRate } from './interface.js';
+import { DatabaseSchema, ILoanRepository, LoanPosition, AssetPrice, MarketRate, VolatilityPrediction } from './interface.js';
 
 export class SQLiteAdapter implements ILoanRepository {
   private db: Kysely<DatabaseSchema>;
@@ -113,6 +113,24 @@ export class SQLiteAdapter implements ILoanRepository {
         .addColumn('rateType', 'text')
         .execute();
     } catch (e) {}
+
+    await this.db.schema
+      .createTable('volatility_predictions')
+      .ifNotExists()
+      .addColumn('symbol', 'text', (cb) => cb.primaryKey())
+      .addColumn('timestamp', 'integer')
+      .addColumn('price', 'float8')
+      .addColumn('prediction_30m', 'float8')
+      .addColumn('prediction_daily', 'float8')
+      .addColumn('prediction_ann', 'float8')
+      .execute();
+
+    try {
+      await this.db.schema
+        .alterTable('volatility_predictions')
+        .addColumn('price', 'float8')
+        .execute();
+    } catch (e) {}
   }
 
   async upsertPosition(position: LoanPosition): Promise<void> {
@@ -218,6 +236,22 @@ export class SQLiteAdapter implements ILoanRepository {
 
   async close(): Promise<void> {
     await this.db.destroy();
+  }
+
+  async upsertVolatilityPrediction(prediction: VolatilityPrediction): Promise<void> {
+    await this.db
+      .insertInto('volatility_predictions')
+      .values(prediction)
+      .onConflict((oc) => oc.column('symbol').doUpdateSet(prediction))
+      .execute();
+  }
+
+  async getLatestVolatilityPrediction(symbol: string): Promise<VolatilityPrediction | null> {
+    return await this.db
+      .selectFrom('volatility_predictions')
+      .selectAll()
+      .where('symbol', '=', symbol)
+      .executeTakeFirst() ?? null;
   }
 }
  

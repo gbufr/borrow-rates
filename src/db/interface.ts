@@ -56,12 +56,22 @@ export interface SyncMetadata {
   value: string;
 }
 
+export interface VolatilityPrediction {
+  symbol: string;
+  timestamp: number;
+  price: number;
+  prediction_30m: number;
+  prediction_daily: number;
+  prediction_ann: number;
+}
+
 export interface DatabaseSchema {
   positions: LoanPosition;
   block_cursors: BlockCursor;
   prices: AssetPrice;
   rates: MarketRate;
   sync_metadata: SyncMetadata;
+  volatility_predictions: VolatilityPrediction;
 }
 
 export interface ILoanRepository {
@@ -79,5 +89,10 @@ export interface ILoanRepository {
   getLatestRateTimestamp(): Promise<number>;
   getMetadata(key: string): Promise<string | null>;
   setMetadata(key: string, value: string): Promise<void>;
+  
+  // New methods for Volatility
+  upsertVolatilityPrediction(prediction: VolatilityPrediction): Promise<void>;
+  getLatestVolatilityPrediction(symbol: string): Promise<VolatilityPrediction | null>;
+  
   close(): Promise<void>;
 }

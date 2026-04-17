@@ -1,6 +1,6 @@
 import { Kysely, PostgresDialect } from 'kysely';
 import { Pool } from 'pg';
-import { DatabaseSchema, ILoanRepository, LoanPosition, AssetPrice, MarketRate } from './interface.js';
+import { DatabaseSchema, ILoanRepository, LoanPosition, AssetPrice, MarketRate, VolatilityPrediction } from './interface.js';
 
 export class PostgresAdapter implements ILoanRepository {
   private db: Kysely<DatabaseSchema>;
@@ -91,10 +91,21 @@ export class PostgresAdapter implements ILoanRepository {
         .execute();
     } catch (e) {}
 
+    await this.db.schema
+      .createTable('volatility_predictions')
+      .ifNotExists()
+      .addColumn('symbol', 'text', (cb) => cb.primaryKey())
+      .addColumn('timestamp', 'bigint')
+      .addColumn('price', 'float8')
+      .addColumn('prediction_30m', 'float8')
+      .addColumn('prediction_daily', 'float8')
+      .addColumn('prediction_ann', 'float8')
+      .execute();
+
     try {
       await this.db.schema
-        .alterTable('rates')
-        .addColumn('liquidationPenalty', 'float4')
+        .alterTable('volatility_predictions')
+        .addColumn('price', 'float8')
         .execute();
     } catch (e) {}
   }
@@ -225,5 +236,28 @@ export class PostgresAdapter implements ILoanRepository {
 
   async close(): Promise<void> {
     await this.db.destroy();
+  }
+
+  async upsertVolatilityPrediction(prediction: VolatilityPrediction): Promise<void> {
+    await this.db
+      .insertInto('volatility_predictions')
+      .values(prediction)
+      .onConflict((oc) => oc.column('symbol').doUpdateSet({
+        timestamp: prediction.timestamp,
+        price: prediction.price,
+        prediction_30m: prediction.prediction_30m,
+        prediction_daily: prediction.prediction_daily,
+        prediction_ann: prediction.prediction_ann
+      }))
+      .execute();
+  }
+
+  async getLatestVolatilityPrediction(symbol: string): Promise<VolatilityPrediction | null> {
+    const res = await this.db
+      .selectFrom('volatility_predictions')
+      .selectAll()
+      .where('symbol', '=', symbol)
+      .executeTakeFirst();
+    return res ? ({...res, timestamp: Number(res.timestamp)}) as VolatilityPrediction : null;
   }
 }

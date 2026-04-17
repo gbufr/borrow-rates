@@ -8,3 +8,13 @@ data/
 sync_output.txt
 seed_output.log
 dist/
+
+# Volatility Models (Training)
+volatility-calculator/checkpoints_*/
+volatility-calculator/*.pth
+volatility-calculator/*.joblib
+
+# Production Models (Checked into Git)
+!volatility-calculator/*.onnx
+!volatility-calculator/*.onnx.data
+!volatility-calculator/*.json

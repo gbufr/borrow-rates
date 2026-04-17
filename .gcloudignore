@@ -15,3 +15,13 @@ dist/
 .env
 
 # node_modules and frontend are already handled above
+
+# Volatility Models (Training artifacts)
+volatility-calculator/checkpoints_*/
+volatility-calculator/*.pth
+volatility-calculator/*.joblib
+
+# Production Models (Required for deployment)
+!volatility-calculator/*.onnx
+!volatility-calculator/*.onnx.data
+!volatility-calculator/*.json
