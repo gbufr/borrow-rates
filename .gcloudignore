@@ -9,6 +9,8 @@ dist/
 # data/ folder is required for initial seeding
 !data/
 !data/**
+*.pyc
+venv/
 
 *.log
 *.txt
