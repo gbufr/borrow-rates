@@ -91,6 +91,13 @@ export class RiskService {
     return (collUSD * threshold) / debtUSD;
   }
 
+  /**
+   * Calculate efficiency score (alias for Health Factor in this context)
+   */
+  calculateEfficiencyScore(position: any): number {
+    return this.calculateHealthFactor(position);
+  }
+
   getSymbolForAsset(assetAddress: string): string {
     if (!assetAddress) return '???';
     const addr = assetAddress.toLowerCase();

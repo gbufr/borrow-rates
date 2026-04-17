@@ -80,6 +80,12 @@ export class RiskService {
         const threshold = PROTOCOL_THRESHOLDS[position.protocol] || 0.8;
         return (collUSD * threshold) / debtUSD;
     }
+    /**
+     * Calculate efficiency score (alias for Health Factor in this context)
+     */
+    calculateEfficiencyScore(position) {
+        return this.calculateHealthFactor(position);
+    }
     getSymbolForAsset(assetAddress) {
         if (!assetAddress)
             return '???';

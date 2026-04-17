@@ -3,6 +3,8 @@ import cors from 'cors';
 import { getDatabaseAdapter } from './db/index.js';
 import { RiskService, PROTOCOL_THRESHOLDS } from './utils/risk.js';
 import { syncAllRates } from './scripts/sync_rates.js';
+import { VolatilityPredictor } from './utils/volatility.js';
+import { syncVolatility } from './scripts/sync_volatility.js';
 const app = express();
 const port = process.env.PORT || 3001;
 const ALLOWED_ORIGINS = [
@@ -26,6 +28,61 @@ app.use(cors({
 }));
 app.use(express.json());
 let riskService;
+let volatilityPredictor;
+app.get('/api/volatility/latest', async (req, res) => {
+    const { symbol } = req.query;
+    const db = await getDatabaseAdapter();
+    try {
+        if (symbol) {
+            const prediction = await db.getLatestVolatilityPrediction(symbol.toUpperCase());
+            return res.json(prediction);
+        }
+        // Return all if no symbol specified
+        const symbols = ['BTC', 'ETH'];
+        const results = await Promise.all(symbols.map(s => db.getLatestVolatilityPrediction(s)));
+        res.json(results.filter(r => r !== null));
+    }
+    catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+app.get('/api/volatility/predict', async (req, res) => {
+    const { symbol = 'BTC' } = req.query;
+    const assetSymbol = symbol.toUpperCase();
+    const db = await getDatabaseAdapter();
+    console.log(`[API] Prediction requested for ${assetSymbol}`);
+    try {
+        // 1. Try to get from DB first
+        const existing = await db.getLatestVolatilityPrediction(assetSymbol);
+        const STALE_THRESHOLD_MS = 65 * 60 * 1000; // 65 minutes
+        if (existing && (Date.now() - existing.timestamp) < STALE_THRESHOLD_MS) {
+            console.log(`[API] Returning cached prediction for ${assetSymbol}`);
+            return res.json(existing);
+        }
+        // 2. Fallback to on-demand if stale or missing (optional, but good for UX)
+        console.log(`[API] Cache stale or missing for ${assetSymbol}. Fetching on-demand...`);
+        const klines = await volatilityPredictor.fetchLatestKlines(assetSymbol);
+        const prediction30m = await volatilityPredictor.predict(assetSymbol, klines);
+        const latestPrice = klines[klines.length - 1].close;
+        const daily = VolatilityPredictor.scaleVolatility(prediction30m, 'daily');
+        const ann = VolatilityPredictor.scaleVolatility(prediction30m, 'ann');
+        const result = {
+            symbol: assetSymbol,
+            timestamp: Date.now(),
+            price: latestPrice,
+            prediction_30m: prediction30m,
+            prediction_daily: daily,
+            prediction_ann: ann
+        };
+        // Save to DB so next call is fast
+        await db.upsertVolatilityPrediction(result);
+        res.json(result);
+    }
+    catch (e) {
+        console.error(`[API] Prediction failed for ${assetSymbol}:`, e);
+        res.status(500).json({ error: e.message });
+    }
+});
 app.get('/api/positions', async (req, res) => {
     const { protocol, atRisk, inefficient, debtToken, collateralAsset, chain, limit = 50 } = req.query;
     const db = await getDatabaseAdapter();
@@ -108,28 +165,47 @@ async function start() {
     }
     const db = await getDatabaseAdapter();
     riskService = new RiskService(db);
+    volatilityPredictor = new VolatilityPredictor();
     await riskService.syncPricesFromDb();
-    // Background Sync Loop (1 hour interval)
-    const runBackgroundSync = async () => {
+    // 1. Rate Sync Loop (24 hour interval)
+    const runRateSync = async () => {
+        const SYNC_INTERVAL_MS = 24 * 60 * 60 * 1000;
         while (true) {
+            const latestRateTime = await db.getLatestRateTimestamp();
+            const now = Math.floor(Date.now() / 1000);
+            const timeSinceLastSync = now - latestRateTime;
+            const waitTimeMs = Math.max(0, SYNC_INTERVAL_MS - (timeSinceLastSync * 1000));
+            if (waitTimeMs > 0) {
+                await new Promise(resolve => setTimeout(resolve, waitTimeMs));
+            }
             console.log('[API] Starting background interest rate sync...');
             try {
                 await syncAllRates(db);
-                if (process.env.NODE_ENV === 'production') {
+                if (process.env.NODE_ENV === 'production')
                     await GCSStorage.backup();
-                }
-                console.log('[API] Background interest rate sync completed.');
             }
             catch (e) {
                 console.error('[API] Background interest rate sync failed:', e);
             }
-            console.log('[API] Waiting 24 hours for next sync cycle...');
-            await new Promise(resolve => setTimeout(resolve, 24 * 60 * 60 * 1000));
+            await new Promise(resolve => setTimeout(resolve, SYNC_INTERVAL_MS));
         }
     };
-    // Start the background sync loop (Don't await, let it run in background)
-    runBackgroundSync().catch(e => console.error('[API] Fatal error in sync loop:', e));
-    // Sync prices from DB every 1 second (fast local check)
+    // 2. Volatility Sync Loop (1 hour interval)
+    const runVolatilitySync = async () => {
+        const VOL_INTERVAL_MS = 60 * 60 * 1000;
+        while (true) {
+            console.log('[API] Starting background volatility sync...');
+            try {
+                await syncVolatility();
+            }
+            catch (e) {
+                console.error('[API] Background volatility sync failed:', e);
+            }
+            await new Promise(resolve => setTimeout(resolve, VOL_INTERVAL_MS));
+        }
+    };
+    runRateSync().catch(console.error);
+    runVolatilitySync().catch(console.error);
     setInterval(async () => {
         try {
             await riskService.syncPricesFromDb();
@@ -138,7 +214,6 @@ async function start() {
             console.error('Failed to sync prices in background:', e);
         }
     }, 1000);
-    // Periodic GCS pull (every 1 hour) to keep up with background sync
     if (process.env.NODE_ENV === 'production') {
         setInterval(async () => {
             console.log('[API] Checking for database updates in GCS...');
