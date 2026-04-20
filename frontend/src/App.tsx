@@ -13,6 +13,7 @@ import { BitcoinL2 } from './components/Bitcoin/BitcoinL2';
 import { ProtocolDiscovery } from './components/Discovery/ProtocolDiscovery';
 import { InsuranceDiscovery } from './components/Discovery/InsuranceDiscovery';
 import { AutomationDiscovery } from './components/Discovery/AutomationDiscovery';
+import VolatilityPredictor from './components/VolatilityPredictor';
 
 function App() {
   const { activeTab, setActiveTab, btcSubTab, setBtcSubTab } = useActiveTab();
@@ -44,7 +45,7 @@ function App() {
     }
   };
 
-  const tabs = ['DeFi Rates', 'CeFi Rates', 'Bitcoin', 'RWAs', 'Protocols', 'Insurance', 'Automation'];
+  const tabs = ['DeFi Rates', 'CeFi Rates', 'Bitcoin', 'Volatility', 'RWAs', 'Protocols', 'Insurance', 'Automation'];
 
   return (
     <div className="dashboard">
@@ -73,6 +74,8 @@ function App() {
       {activeTab === 'Insurance' && <InsuranceDiscovery />}
       
       {activeTab === 'Automation' && <AutomationDiscovery />}
+
+      {activeTab === 'Volatility' && <VolatilityPredictor />}
 
       {(activeTab === 'DeFi Rates' || activeTab === 'Bitcoin') && (
         <div className="tab-content-wrapper">

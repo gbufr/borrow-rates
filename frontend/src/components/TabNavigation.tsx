@@ -14,8 +14,12 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({ tabs, activeTab, o
           key={t}
           className={`nav-btn ${activeTab === t ? 'active' : ''}`}
           onClick={() => onTabChange(t)}
+          style={{ position: 'relative' }}
         >
           {t}
+          {t === 'Volatility' && (
+            <span className="new-badge">New</span>
+          )}
         </button>
       ))}
     </nav>
