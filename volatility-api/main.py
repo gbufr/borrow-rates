@@ -10,7 +10,7 @@ from data_utils import prepare_inference_data, download_latest_data
 app = Flask(__name__)
 
 # CORS Configuration
-cors_whitelist = os.environ.get("CORS_WHITELIST", "https://liquidax.app,http://localhost:3000,https://borrowdesk.org,https://www.borrowdesk.org").split(",")
+cors_whitelist = os.environ.get("CORS_WHITELIST", "https://liquidax.app,http://localhost:3000,http://localhost:5173,https://borrowdesk.org,https://www.borrowdesk.org").split(",")
 CORS(app, origins=cors_whitelist)
 
 # Load Models and Scalers
@@ -65,8 +65,12 @@ def predict(symbol):
         # Annualized (365 days)
         predicted_vol_ann = predicted_vol_day * (365 ** 0.5)
         
+        # Current Price
+        current_price = df['close'].iloc[-1]
+        
         return jsonify({
             "symbol": full_symbol,
+            "current_price": float(current_price),
             "predicted_volatility_30m": predicted_vol_30m,
             "predicted_volatility_daily": predicted_vol_day,
             "predicted_volatility_annualized": predicted_vol_ann,
