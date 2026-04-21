@@ -17,7 +17,7 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({ tabs, activeTab, o
           style={{ position: 'relative' }}
         >
           {t}
-          {t === 'Volatility' && (
+          {t === 'Volatility Prediction' && (
             <span className="new-badge">New</span>
           )}
         </button>

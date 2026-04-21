@@ -14,7 +14,7 @@ const trackEvent = (action: string, category: string, label?: string, value?: nu
 export function useActiveTab() {
   const [activeTab, setActiveTab] = useState<string>(() => {
     const hash = typeof window !== 'undefined' ? window.location.hash.replace('#', '') : '';
-    return SLUG_TO_TAB[hash] || 'DeFi Rates';
+    return SLUG_TO_TAB[hash] || 'Optimize your position';
   });
 
   const [btcSubTab, setBtcSubTab] = useState<'Rates' | 'Bridges' | 'L2'>(() => {
@@ -55,6 +55,7 @@ export function useActiveTab() {
 
   useEffect(() => {
     const titles: Record<string, string> = {
+      'Optimize your position': 'Optimize your position | BTC & ETH Liquidation Risk Simulator',
       'DeFi Rates': 'DeFi Borrow Rates & APYs | Aave, Morpho, Maker',
       'CeFi Rates': 'CeFi Lending Rates | Coinbase, Binance, Nexo',
       'Bitcoin': 'Bitcoin Borrow Rates | Citrea, Babylon, Lombard',
@@ -63,7 +64,7 @@ export function useActiveTab() {
       'Insurance': 'DeFi Insurance for Borrowers | Nexus Mutual, InsurAce',
       'Automation': 'DeFi Automation for Borrowers | DeFi Saver, Instadapp'
     };
-    const title = titles[activeTab] || 'Live Borrow Rates';
+    const title = titles[activeTab] || 'DeFi Borrow Desk';
     document.title = `${title} | borrowdesk.org`;
     trackEvent('view_tab', 'Navigation', activeTab);
   }, [activeTab]);

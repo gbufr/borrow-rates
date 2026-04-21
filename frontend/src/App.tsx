@@ -45,11 +45,14 @@ function App() {
     }
   };
 
-  const tabs = ['DeFi Rates', 'CeFi Rates', 'Bitcoin', 'Volatility', 'RWAs', 'Protocols', 'Insurance', 'Automation'];
+  const tabs = ['Optimize your position', 'DeFi Rates', 'CeFi Rates', 'Bitcoin', 'RWAs', 'Protocols', 'Insurance', 'Automation'];
 
   return (
     <div className="dashboard">
-      <Header onMenuOpen={() => setIsMenuOpen(true)} />
+      <Header 
+        onMenuOpen={() => setIsMenuOpen(true)} 
+        onTabChange={setActiveTab}
+      />
 
       <TabNavigation 
         tabs={tabs} 
@@ -75,7 +78,7 @@ function App() {
       
       {activeTab === 'Automation' && <AutomationDiscovery />}
 
-      {activeTab === 'Volatility' && <VolatilityPredictor />}
+      {activeTab === 'Optimize your position' && <VolatilityPredictor />}
 
       {(activeTab === 'DeFi Rates' || activeTab === 'Bitcoin') && (
         <div className="tab-content-wrapper">

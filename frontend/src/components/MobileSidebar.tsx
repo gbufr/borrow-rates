@@ -34,8 +34,12 @@ export const MobileSidebar: React.FC<MobileSidebarProps> = ({
                 onTabChange(t);
                 onClose();
               }}
+              style={{ position: 'relative' }}
             >
               {t}
+              {t === 'Optimize your position' && (
+                <span className="new-badge" style={{ marginLeft: '8px' }}>New</span>
+              )}
             </button>
           ))}
         </nav>
