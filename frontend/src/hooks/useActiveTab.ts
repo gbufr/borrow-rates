@@ -14,7 +14,7 @@ const trackEvent = (action: string, category: string, label?: string, value?: nu
 export function useActiveTab() {
   const [activeTab, setActiveTab] = useState<string>(() => {
     const hash = typeof window !== 'undefined' ? window.location.hash.replace('#', '') : '';
-    return SLUG_TO_TAB[hash] || 'Optimize your position';
+    return SLUG_TO_TAB[hash] || 'DeFi Rates';
   });
 
   const [btcSubTab, setBtcSubTab] = useState<'Rates' | 'Bridges' | 'L2'>(() => {
@@ -55,8 +55,9 @@ export function useActiveTab() {
 
   useEffect(() => {
     const titles: Record<string, string> = {
-      'Optimize your position': 'Optimize your position | BTC & ETH Liquidation Risk Simulator',
       'DeFi Rates': 'DeFi Borrow Rates & APYs | Aave, Morpho, Maker',
+      'Volatility': 'Asset Volatility Predictions | BTC & ETH Forecasts',
+      'Position Simulator': 'Position Simulator | Liquidation Risk Simulator',
       'CeFi Rates': 'CeFi Lending Rates | Coinbase, Binance, Nexo',
       'Bitcoin': 'Bitcoin Borrow Rates | Citrea, Babylon, Lombard',
       'RWAs': 'RWA Lending Rates | BlackRock BUIDL, Ondo, Superstate',
