@@ -25,23 +25,34 @@ const VolatilityOverview: React.FC = () => {
     setLoading(true);
     try {
       const [btcRes, ethRes] = await Promise.all([
-        fetch('/api/volatility/predict?symbol=BTC'),
-        fetch('/api/volatility/predict?symbol=ETH'),
+        fetch('https://volatility-api.lm.r.appspot.com/predict/BTC'),
+        fetch('https://volatility-api.lm.r.appspot.com/predict/ETH'),
       ]);
       
       if (!btcRes.ok || !ethRes.ok) {
-        throw new Error('Server returned an error');
+        throw new Error('Volatility API returned an error');
       }
 
-      const [btcData, ethData] = await Promise.all([btcRes.json(), ethRes.json()]);
+      const [btcRaw, ethRaw] = await Promise.all([btcRes.json(), ethRes.json()]);
+      
+      // Map Python API fields to our expected format
+      const mapData = (raw: any): PredictionData => ({
+        symbol: raw.symbol,
+        price: raw.current_price,
+        prediction_30m: raw.predicted_volatility_30m,
+        prediction_daily: raw.predicted_volatility_daily,
+        prediction_ann: raw.predicted_volatility_annualized,
+        timestamp: new Date(raw.timestamp).getTime()
+      });
+
       setData({
-        BTC: btcData,
-        ETH: ethData,
+        BTC: mapData(btcRaw),
+        ETH: mapData(ethRaw),
       });
       setError(null);
     } catch (err) {
       console.error('Failed to fetch predictions:', err);
-      setError('Failed to load predictions. Please ensure the local backend is running.');
+      setError('Failed to load predictions. Please try again later.');
     } finally {
       setLoading(false);
     }
